@@ -9,12 +9,17 @@
 #include "funcs.h"
 
 /* Prototypes mirroring the C++ version */
-static void main_menu(void);            /* runs in the main loop */
-static void print_main_menu(void);      /* output the main menu description */
-static int  get_user_input(void);       /* get a valid integer menu choice */
-static void select_menu_item(int input);/* run code based on user's choice */
-static void go_back_to_main(void);      /* wait for 'b'/'B' to continue */
-static int  is_integer(const char *s);  /* validate integer string */
+static void main_menu(void);            /* runs in the main loop */               //        ---  infinite loop to run the program: print menu and get input  don't touch
+
+static void print_main_menu(void);      /* output the main menu description */    //            ---  prints the options         DONE
+
+static int  get_user_input(void);       /* get a valid integer menu choice */   // ----   Validates user input for the menu too  - don't need to touch
+
+static void select_menu_item(int input);/* run code based on user's choice */    //             ---  just selects the option and runs the function            DONE
+ 
+static void go_back_to_main(void);      /* wait for 'b'/'B' to continue */        //           ----  no need to touch, returns to main menu if user wants to
+
+static int  is_integer(const char *s);  /* validate integer string */             //              --- don't touch input validation
 
 int main(void)
 {
@@ -37,7 +42,7 @@ static void main_menu(void)
 
 static int get_user_input(void)
 {
-    enum { MENU_ITEMS = 5 };   /* 1..4 = items, 5 = Exit */
+    enum { MENU_ITEMS = 6 };   /* 1..4 = items, 5 = Exit */
     char buf[128];
     int valid_input = 0;
     int value = 0;
@@ -89,6 +94,10 @@ static void select_menu_item(int input)
             menu_item_4();
             go_back_to_main();
             break;
+        case 5:
+            menu_item_5();
+            go_back_to_main();
+            break;
         default:
             printf("Bye!\n");
             exit(0);
@@ -100,11 +109,12 @@ static void print_main_menu(void)
     printf("\n----------- Main menu -----------\n");
     printf("\n"
            "\t\t\t\t\t\t\n"
-           "\t1. Menu item 1\t\t\n"
-           "\t2. Menu item 2\t\t\n"
-           "\t3. Menu item 3\t\t\n"
-           "\t4. Menu item 4\t\t\n"
-           "\t5. Exit\t\t\t\t\n"
+           "\t1. Logic Gate Information\t\t\n"
+           "\t2. Make Logic Circuit\t\t\n"
+           "\t3. Make Test Script\t\t\n"
+           "\t4. Run Test Script\t\t\n"
+           "\t5. Generate Truth Table of Circuit\t\t\n"
+           "\t6. Exit\t\t\t\t\n"
            "\t\t\t\t\t\t\n");
     printf("---------------------------------------------\n");
 }

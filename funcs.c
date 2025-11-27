@@ -1,16 +1,6 @@
 #include <stdio.h>
 #include "funcs.h"
 
-struct Gate{
-    char diagram;
-    int n_nands;
-    char inputs[20];                    // unsure how to make the array of inputs. May need to determine that for every gate separately
-    char outputs[20];
-    char Boolean_representation;
-
-    
-};
-
 void menu_item_1(void) {
     printf("\n>> Menu 1: Logic Gate Information\n");
     printf("\nSome code here does something useful\n");
@@ -23,17 +13,21 @@ void menu_item_1(void) {
     4th, asks if want to display another gate. If not, returns to menu.
     */
 
-    // Selecting which gate the user wants info for
-    printf("\nSelect which gate to display information for (enter a number)\n");
-    print_gates();
-    int display_choice = get_user_input();
 
+    // Selecting which gate the user wants info for
+
+    printf("\nSelect which gate to display information for (enter a number)\n"); // getting user input
+    print_gates();  // displaying the gate options
+    int display_choice = get_user_input(); // validating the input
+
+    struct Gate *p = &NAND; // initialising a pointer for a gate
+    select_gate(p, display_choice); // calls a function which points the pointer towards the correct gate 
 
 
 
 }
 
-void print_gates(void){
+void print_gates(void){ 
     printf("\n"
            "\t\t\t\t\t\t\n"
            "\t1. NAND\t\t\n"
@@ -44,10 +38,41 @@ void print_gates(void){
            "\t6. Buffer\t\t\t\t\n"
            "\t7. Mux\t\t\n"
            "\t8. Demux\t\t\n"
-           "\t9. other ALU stuff?\t\t\n"
            "\t\t\t\t\t\t\n");
 }
 
+void select_gate(struct Gate *p, int display_choice) // // A function which points the pointer towards the correct gate - depending on the entered number, enabling gate selection
+{
+    switch (display_choice) {
+        case 1:
+            p = &NAND;
+            break;
+        case 2:
+            p = &NOT;
+            break;
+        case 3:
+            p = &AND;
+            break;
+        case 4:
+            p = &OR;
+            break;
+        case 5:
+            p = &XOR;
+            break;
+        case 6:
+            p = &Buffer;
+            break;
+        case 7:
+            p = &Mux;
+            break;
+        case 8:
+            p = &Demux;
+            break;
+        default:
+            printf("Bye!\n");
+            exit(0);
+    }
+}
 
 void menu_item_2(void) {
     printf("\n>> Menu 2: Make Logic Circuit\n");

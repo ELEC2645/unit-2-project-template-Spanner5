@@ -10,13 +10,13 @@
 
 /* Prototypes mirroring the C++ version */
 
-typedef enum { A =1, MENU_ITEMS = 6,  } menu_items ;   // - defining an enum globally for use in input validation
+// do this in h file typedef enum { A =1, MENU_ITEMS = 6, GATE_OPTIONS = 8 } menu_items ;   // - defining an enum globally for use in input validation
 
 static void main_menu(void);            /* runs in the main loop */               //        ---  infinite loop to run the program: print menu and get input  don't touch
 
 static void print_main_menu(void);      /* output the main menu description */    //            ---  prints the options         DONE
 
-static int  get_user_input(menu_items);       /* get a valid integer menu choice */   // ----   Validates user input for the menu too  - don't need to touch
+static int  get_user_input(menu_items local_name_of_enum_value);  // Don't know if I need to put local_name_of_enum_value here     /* get a valid integer menu choice */   // ----   Validates user input for the menu too  - don't need to touch
 
 static void select_menu_item(int input);/* run code based on user's choice */    //             ---  just selects the option and runs the function            DONE
  
@@ -41,17 +41,15 @@ static void main_menu(void)
     print_main_menu();
 
     menu_items cur_items = MENU_ITEMS;
-    cur_items = A;
+    // cur_items = A; - use this to rewrite the value of cur_items to another enum value
     int input = get_user_input(cur_items);
     select_menu_item(input);
 }
 
-static int get_user_input(menu_items local_name)
+static int get_user_input(menu_items local_name_of_enum_value)
 {
+    // local_name_of_enum_value is the number of numbers we want in our list of possible inputs for menu selection
 
-    local_name = A;
-
-    
     //enum { MENU_ITEMS = n };   /* E.g. 1..4 = items, 5 = Exit */   --- I've taken this line out, so that I can reuse this function for other input validation,
                                                                     //   where I can provide a different length enum to match the situation
     char buf[128];
@@ -74,7 +72,7 @@ static int get_user_input(menu_items local_name)
             valid_input = 0;
         } else {
             value = (int)strtol(buf, NULL, 10);
-            if (value >= 1 && value <= MENU_ITEMS) {
+            if (value >= 1 && value <= local_name_of_enum_value) {
                 valid_input = 1;
             } else {
                 printf("Invalid menu item!\n");

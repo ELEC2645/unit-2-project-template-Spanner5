@@ -35,7 +35,7 @@ static int get_user_input(menu_items local_name)
 
 
 
-
+typedef enum { A =1, MENU_ITEMS = 6, GATE_OPTIONS = 8 } menu_items ;   // - defining an enum globally for use in input validation
 
 struct Gate{
     char name[10];

@@ -18,7 +18,8 @@ void menu_item_1(void) {
 
     printf("\nSelect which gate to display information for (enter a number)\n"); // getting user input
     print_gates();  // displaying the gate options
-    int display_choice = get_user_input(); // validating the input
+    menu_items number_of_possible_inputs = GATE_OPTIONS;
+    int display_choice = get_user_input(number_of_possible_inputs); // validating the input
 
     struct Gate *p = &NAND; // initialising a pointer for a gate
     select_gate(p, display_choice); // calls a function which points the pointer towards the correct gate 

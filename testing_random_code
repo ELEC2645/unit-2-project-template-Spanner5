@@ -4,9 +4,15 @@
 #include <ctype.h>
 #include <math.h>
 
+void hopefully_changes_values_in_character_array();
+
 
 int main(void)
 {
+    
+}
+
+void hopefully_changes_values_in_character_array(){
     char* string_array[6];
     printf("%c",string_array);
 
@@ -15,4 +21,4 @@ int main(void)
     }
 
     printf("%c",string_array);
-}
+    }

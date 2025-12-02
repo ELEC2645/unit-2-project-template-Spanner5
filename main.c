@@ -26,6 +26,15 @@ static int  is_integer(const char *s);  /* validate integer string */           
 int main(void)
 {
     /* this will run forever until we call exit(0) in select_menu_item() */
+
+    // the create gates function needs to return to here rather than main_menu so that the gate labels and values are reset
+
+    for (int i; i<MAX_NUMBER_OF_IO_LABELS; i++){
+        array_of_io_labels[i] = "unassigned"; // setting all the values in the array of input & output labels to unassigned, mostly for testing,
+                                          // but also to ensure that the values are all reset before starting the next menu
+    }
+
+
     for(;;) {
         main_menu();
     }

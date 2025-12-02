@@ -91,8 +91,8 @@ void select_gate(struct Gate *p, int display_choice) // // A function which poin
             p = &Demux;
             break;
         default:
-            printf("Invalid input! Returning to Menu 1\n");
-            menu_item_1();
+            printf("Invalid input! Returning to Main Menu\n");
+            main_menu();
     }
 }
 
@@ -104,12 +104,93 @@ void menu_item_2(void) {
     /*
     Ideas:
 
-    Requires user input to select gate.
+    Requires user input to select gate. With option to instead view gates if they don't know.
     Need to validate that input.
-    Then, for that gate, need to decide inputs for the gate - e.g. pins. But if I print a picture of gate and say the pin labels to make it easy. Need to specify number of bits of input to get bits of rest of circuit - or go gate by gate
+    Then, for that gate, need to decide inputs for the gate - e.g. pins.
+    But if I print a picture of gate and say the pin labels to make it easy.
+    Need to specify number of bits of input to get bits of rest of circuit - or go gate by gate
     If possible, display the current built circuit to make design easier - rather than gate by gate
     After a gate, choose to add more gates. Return to menu. Run test script. Test individual output.
     */
+
+
+    /*
+    Idea: make one function that can do all the possible gate functions,
+    but the action it does depends on which gate is selected.
+
+    Also: for every gate, store the labels in one big array and each label corresponds to a value in another big array
+    (would be good to make an array of pointers - as done by char*) where each pointer is given a value.
+    Then can assaign pointers to be equal to each other and perform operations on the pointers until an output is reached.
+    
+    OR: have an array of values and assign each pointer to a value.
+    But if a pointer's value equals another pointer's name then it's assigned the same value and changes as the previous pointers do. Right?
+    The question is how to check the pointer names.
+
+    Probably easier to creat an array of character type labels which matches up exactly with an array of pointers of the same names or position.
+    Where each pointe has a value which refers to a 1, 0 or another pointer's value
+    (or combination of pointers' values as given by logic gate computations).
+
+
+    ACTUALLY, the values are determined by test scripts.
+    But the status of which labels are dictated by the test script and which are dictated by other pointers needs to be clear.
+    If a label is NOT EWUAL TO a previous label, then its value should be made equal to,  say, -1
+    to ensure that they are singled out for making the test scripts: because they are inputs.
+    Also, if a label is at the end of the chain (no pointers use its value) then it should be marked as a output variable.
+    */
+    
+
+
+
+
+
+    /*
+    
+    First, ask for which gate they'd like to add to circuit.
+    Then print list of gates using print gates function.
+    Then do select gates function.
+    The pointer p now points to the gate they'd like to build.
+    Use the data in the structs to do a for loop making/assigning labels for each of the NAMED inputs and outputs for the gate.
+    Ask the user fo each label name (limit 10 characters)
+    Store each label name in the global array of label names.
+    Check through the array of names to see if the label names for any inputs or outputs are equal to those.
+    If they are, make the value of the array (a pointer) equal to the value of the pointer of the thing its the same label as.
+    If not, make the value equal to -1. This should separate inputs from internal pins.
+    As for the output(s), need to update a metadata for each value array for the number of times that pointer has been referenced
+    (just increment a value in a loop). The value which has not been referenced is therefore an output. 
+
+    NOTE: SHOULD keep duplicate pin labels for the sake of indexing the pointers.
+
+    NOTE: need to store the pointers for each label in same ndex as the label, for simplicity, even though different arrays.
+
+    Now that the labels have been dealt with, and the pointers and values for inputs have been worked out, now for outputs.
+
+    Need to have ALL possible gate operations in a single function,
+    the gte operation is selected using enum cases based on the gate selected by the user.
+    The operation is carried out using the pointers for the inputs. And the output value is assigned to a pointer,
+    which is stored in the same index as the label for the output.
+
+    After doing this gate. Perhaps update the diagram?
+    Or print a new diagram with the new gate shown next to the other gates if not linked up directly.
+
+    Finally, ask the user if they'd like to add another gate to the circuit.
+    If not, then run the make test script function IN THE BACKGROUND and notify the user that it's been made.
+    Then return to MAIN (not main menu, to  reset the gate.) The only time main menu is returned to is when there's an error in the input.
+    And the gate is not destroyed intermittently.
+
+
+    -----------------
+    Could alternatively add a new menu option for destroying the circuit, so that user could come back and add to it.
+
+    Can't edit it though, can't delete or undo.
+    -----------------
+
+    */
+
+
+
+
+
+    main(); // return to main at the end to reset all the gate labels and values
 }
 
 void menu_item_3(void) {

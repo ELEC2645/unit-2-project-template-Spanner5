@@ -5,6 +5,8 @@
         "functional": "c",
         "tuple": "c",
         "utility": "c",
-        "testing random code": "cpp"
+        "testing random code": "cpp",
+        "testing_random _code": "c",
+        "testing_random_code": "c"
     }
 }

@@ -10,8 +10,6 @@
 
 /* Prototypes mirroring the C++ version */
 
-// do this in h file typedef enum { A =1, MENU_ITEMS = 6, GATE_OPTIONS = 8 } menu_items ;   // - defining an enum globally for use in input validation
-
 static void main_menu(void);            /* runs in the main loop */               //        ---  infinite loop to run the program: print menu and get input  don't touch
 
 static void print_main_menu(void);      /* output the main menu description */    //            ---  prints the options         DONE
@@ -27,7 +25,6 @@ static int  is_integer(const char *s);  /* validate integer string */           
 
 int main(void)
 {
-    create_all_gates(); // Initialising all the logic gates before running the main program
     /* this will run forever until we call exit(0) in select_menu_item() */
     for(;;) {
         main_menu();
@@ -107,9 +104,12 @@ static void select_menu_item(int input)
             menu_item_5();
             go_back_to_main();
             break;
-        default:
+        case 6:
             printf("Bye!\n");
             exit(0);
+        default:
+            printf("Invalid Input. Exiting anyway. Bye!\n");
+            exit(1);
     }
 }
 

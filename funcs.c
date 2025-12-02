@@ -19,13 +19,34 @@ void menu_item_1(void) {
     printf("\nSelect which gate to display information for (enter a number)\n"); // getting user input
     print_gates();  // displaying the gate options
     menu_items number_of_possible_inputs = GATE_OPTIONS;
-    int display_choice = get_user_input(number_of_possible_inputs); // validating the input
+    int display_choice = get_user_input(number_of_possible_inputs); // retreiving and validating the input
 
-    struct Gate *p = &NAND; // initialising a pointer for a gate
+    struct Gate *p = &NAND; // initialising a pointer for a gate, setting it to NAND by default
     select_gate(p, display_choice); // calls a function which points the pointer towards the correct gate 
 
 
 
+    // CODE HERE TO DISPLAY THE DIAGRAM STORED IN THE STRUCT
+
+
+
+
+
+    printf("Name of Gate: %c",p->name);
+    printf("Number of NANDs used to make the gate: %d",p->n_nands);
+    printf("Number of inputs: %d",p->n_inputs);
+    printf("Number of outputs: %d",p->n_outputs);
+    printf("Boolean_representation: %c",p->Boolean_representation);
+    
+    printf("Would you like to display information for another gate?\n(Enter 1 for yes, 0 for no)    ");
+    menu_items two_options = BINARY_CHOICE;
+    int yes_no = get_user_input(two_options);
+    if (yes_no == 1){
+        menu_item_1();
+    } else {
+        printf("Returning to Main Menu");
+        main_menu();
+    }
 }
 
 void print_gates(void){ 
@@ -70,8 +91,8 @@ void select_gate(struct Gate *p, int display_choice) // // A function which poin
             p = &Demux;
             break;
         default:
-            printf("Bye!\n");
-            exit(0);
+            printf("Invalid input! Returning to Menu 1\n");
+            menu_item_1();
     }
 }
 
@@ -114,7 +135,7 @@ void menu_item_4(void) {
     /* you can call a function from here that handles menu 4 */
 }
 
-void menu_item_4(void) {
+void menu_item_5(void) {
     printf("\n>> Menu 4: Generate Truth Table of Circuit\n");
     printf("\nSome code here does something useful\n");
     /* you can call a function from here that handles menu 4 */

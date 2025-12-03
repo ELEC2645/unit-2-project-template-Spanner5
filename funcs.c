@@ -6,7 +6,7 @@ void menu_item_1(void) {
     printf("\nSome code here does something useful\n");
     /* you can call a function from here that handles menu 1 */
 
-    /* 
+    /*
     First, a sub-menu for options to select the gates:  (select which gate to display information for (enter a number))
     2nd, for the user input number, validate it, etc - use existing functions to do that
     3rd, display info for the coresponding gate (use structs and pointers to select and print the gate info) - want a picture for each gate and info
@@ -22,7 +22,7 @@ void menu_item_1(void) {
     int display_choice = get_user_input(number_of_possible_inputs); // retreiving and validating the input
 
     struct Gate *p = &NAND; // initialising a pointer for a gate, setting it to NAND by default
-    select_gate(p, display_choice); // calls a function which points the pointer towards the correct gate 
+    select_gate(p, display_choice); // calls a function which points the pointer towards the correct gate
 
 
 
@@ -37,7 +37,7 @@ void menu_item_1(void) {
     printf("Number of inputs: %d",p->n_inputs);
     printf("Number of outputs: %d",p->n_outputs);
     printf("Boolean_representation: %c",p->Boolean_representation);
-    
+   
     printf("Would you like to display information for another gate?\n(Enter 1 for yes, 0 for no)    ");
     menu_items two_options = BINARY_CHOICE;
     int yes_no = get_user_input(two_options);
@@ -49,7 +49,7 @@ void menu_item_1(void) {
     }
 }
 
-void print_gates(void){ 
+void print_gates(void){
     printf("\n"
            "\t\t\t\t\t\t\n"
            "\t1. NAND\t\t\n"
@@ -121,7 +121,7 @@ void menu_item_2(void) {
     Also: for every gate, store the labels in one big array and each label corresponds to a value in another big array
     (would be good to make an array of pointers - as done by char*) where each pointer is given a value.
     Then can assaign pointers to be equal to each other and perform operations on the pointers until an output is reached.
-    
+   
     OR: have an array of values and assign each pointer to a value.
     But if a pointer's value equals another pointer's name then it's assigned the same value and changes as the previous pointers do. Right?
     The question is how to check the pointer names.
@@ -137,14 +137,14 @@ void menu_item_2(void) {
     to ensure that they are singled out for making the test scripts: because they are inputs.
     Also, if a label is at the end of the chain (no pointers use its value) then it should be marked as a output variable.
     */
-    
+   
 
 
 
 
 
     /*
-    
+   
     First, ask for which gate they'd like to add to circuit.
     Then print list of gates using print gates function.
     Then do select gates function.
@@ -156,7 +156,7 @@ void menu_item_2(void) {
     If they are, make the value of the array (a pointer) equal to the value of the pointer of the thing its the same label as.
     If not, make the value equal to -1. This should separate inputs from internal pins.
     As for the output(s), need to update a metadata for each value array for the number of times that pointer has been referenced
-    (just increment a value in a loop). The value which has not been referenced is therefore an output. 
+    (just increment a value in a loop). The value which has not been referenced is therefore an output.
 
     NOTE: SHOULD keep duplicate pin labels for the sake of indexing the pointers.
 
@@ -198,8 +198,8 @@ void menu_item_3(void) {
     printf("\nSome code here does something useful\n");
     /* you can call a function from here that handles menu 3 */
 
-    /* 
-    Allows user to enter to decide how many variables, variable names, outputs, then the variables will increment as normal, but the user will enter the output value for each output on a row 
+    /*
+    Allows user to enter to decide how many variables, variable names, outputs, then the variables will increment as normal, but the user will enter the output value for each output on a row
     */
 
 }
@@ -217,14 +217,30 @@ void menu_item_4(void) {
 }
 
 void menu_item_5(void) {
-    printf("\n>> Menu 4: Generate Truth Table of Circuit\n");
+    printf("\n>> Menu 5: Generate Truth Table of Circuit\n");
     printf("\nSome code here does something useful\n");
-    /* you can call a function from here that handles menu 4 */
-    
+    /* you can call a function from here that handles menu 5 */
+   
     /*
     First, check if a circuit exists, if not - return to menu
     Basically, just need to run the circuit for each possible input and record output in a table., (Print an array). Use iterative for loop from i of msb, j of less msb, ... z of lowest msb
     e.g. for i(...){ for j(...){ for z(... )}}
 
     */
+}
+
+void menu_item_6(void) {
+    printf("\n>> Menu 6: Clear Circuit\n");
+    printf("\nSome code here does something useful\n");
+    /* you can call a function from here that handles menu 6 */
+   
+    /*
+    This function clears the array of labels and the array of values by setting all the values in the labels to "unassigned" and all the values in the values array to 0
+    */
+
+    for (int i; i<MAX_NUMBER_OF_IO_LABELS; i++){
+    array_of_io_labels[i][10] = "unassigned"; /* setting all the values in the array of input & output labels to unassigned,
+                                                 to ensure that the values are all reset before starting the next circuit */
+    array_of_io_values[i] = 0; // setting all the values in the array of input & output values to 0. To reset all the values for the next circuit.
+    }
 }

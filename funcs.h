@@ -1,13 +1,13 @@
 #ifndef FUNCS_H
 #define FUNCS_H
 
-typedef enum { BINARY_CHOICE = 2, MENU_ITEMS = 6, GATE_OPTIONS = 8, MAX_NUMBER_OF_IO_LABELS = 100 } menu_items ;   // - defining an enum globally for use in input validation
+typedef enum { BINARY_CHOICE = 2, MENU_ITEMS = 7, GATE_OPTIONS = 8, MAX_NUMBER_OF_IO_LABELS = 100 } menu_items ;   // - defining an enum globally for use in input validation
 
 char* array_of_io_labels[MAX_NUMBER_OF_IO_LABELS][10]; // making a character array where each term is an empty space for a label (of the variables used in the gates).
 // --- [10];  limit of 10 characters per label name
 
 int* array_of_io_values[MAX_NUMBER_OF_IO_LABELS];
-/* 
+/*
 making an array of integer values which will change depending on the computations done to with pointers
 - the value in an array should match that of the labels - except in the cases where a label is marked equal to another
 
@@ -117,10 +117,10 @@ void menu_item_2(void);
 void menu_item_3(void);
 void menu_item_4(void);
 void menu_item_5(void);
-//void menu_item_6(void);
+void menu_item_6(void);
 
 
-// MY INTERNAL FUNCTIONS for within the 5 menu options
+// MY INTERNAL FUNCTIONS for within the 6 menu options
 
 void print_gates(void);
 void select_gate(struct Gate *p, int display_choice);
@@ -151,5 +151,5 @@ static int get_user_input(menu_items local_name)
 
     rest of function
 }
-    
+   
 */

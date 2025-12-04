@@ -3,8 +3,12 @@
 
 typedef enum { BINARY_CHOICE = 2, MENU_ITEMS = 7, GATE_OPTIONS = 8, MAX_NUMBER_OF_IO_LABELS = 100 } menu_items ;   // - defining an enum globally for use in input validation
 
-char* array_of_io_labels[MAX_NUMBER_OF_IO_LABELS][10]; // making a character array where each term is an empty space for a label (of the variables used in the gates).
+char* array_of_io_labels[MAX_NUMBER_OF_IO_LABELS]; // making a character array where each term is an empty space for a label (of the variables used in the gates).
 // --- [10];  limit of 10 characters per label name
+
+/* in the main program, each slot of the array of io labels gets rewritten to:
+array_of_io_labels[i] = [pin_label,input_1,input_2,input_3,gate_type] // should I add is output or is input to the label? */
+
 
 int* array_of_io_values[MAX_NUMBER_OF_IO_LABELS];
 /*

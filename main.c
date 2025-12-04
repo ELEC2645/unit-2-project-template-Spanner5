@@ -25,6 +25,8 @@ static int  is_integer(const char *s);  /* validate integer string */           
 
 int main(void)
 {
+    menu_item_6(); // Running this function first to set all the labels and values for the created pins of the gates to zero
+
     /* this will run forever until we call exit(0) in select_menu_item() */
     for(;;) {
         main_menu();

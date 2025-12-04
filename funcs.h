@@ -1,16 +1,18 @@
 #ifndef FUNCS_H
 #define FUNCS_H
 
-typedef enum { BINARY_CHOICE = 2, MENU_ITEMS = 7, GATE_OPTIONS = 8, MAX_NUMBER_OF_IO_LABELS = 100 } menu_items ;   // - defining an enum globally for use in input validation
+typedef enum { BINARY_CHOICE = 2, MENU_ITEMS = 7, GATE_OPTIONS = 8, MAX_NUMBER_OF_IO_PINS = 100, NUMBER_OF_PIN_LABELS = 6 } menu_items ;   // - defining an enum globally for use in input validation
 
-char* array_of_io_labels[MAX_NUMBER_OF_IO_LABELS]; // making a character array where each term is an empty space for a label (of the variables used in the gates).
+// OR maybe make an array and then replace each with another array
+
+char* array_of_io_labels[MAX_NUMBER_OF_IO_PINS][NUMBER_OF_PIN_LABELS][10]; // making a character array where each term is an empty space for a label (of the variables used in the gates).
 // --- [10];  limit of 10 characters per label name
 
 /* in the main program, each slot of the array of io labels gets rewritten to:
 array_of_io_labels[i] = [pin_label,input_1,input_2,input_3,gate_type] // should I add is output or is input to the label? */
 
 
-int* array_of_io_values[MAX_NUMBER_OF_IO_LABELS];
+int* array_of_io_values[MAX_NUMBER_OF_IO_PINS];
 /*
 making an array of integer values which will change depending on the computations done to with pointers
 - the value in an array should match that of the labels - except in the cases where a label is marked equal to another
@@ -48,6 +50,8 @@ struct Gate{
      */
 };
 
+
+
 struct Gate NAND = {
     .name = "NAND",
     .diagram = 0,//"Need to load the diagram or print it using ASCII",
@@ -74,6 +78,8 @@ struct Gate AND = {
     .n_nands = 2,
     .n_inputs = 2,
     .n_outputs = 1,
+    .input_names = "A","B",
+    .output_names = "Y",
     .Boolean_representation = "Y = A.B"};
 
 struct Gate OR = {
@@ -82,6 +88,8 @@ struct Gate OR = {
     .n_nands = 3,
     .n_inputs = 2,
     .n_outputs = 1,
+    .input_names = "A","B",
+    .output_names = "Y",
     .Boolean_representation = "Y = A+B"};
 
 struct Gate XOR = {
@@ -90,6 +98,8 @@ struct Gate XOR = {
     .n_nands = 4,
     .n_inputs = 2,
     .n_outputs = 1,
+    .input_names = "A","B",
+    .output_names = "Y",
     .Boolean_representation = "Y = A⊕B"};
 
 struct Gate Buffer = {
@@ -98,6 +108,8 @@ struct Gate Buffer = {
     .n_nands = 0,
     .n_inputs = 1,
     .n_outputs = 1,
+    .input_names = "A",
+    .output_names = "Y",
     .Boolean_representation = "Y = A"};
 
 struct Gate Mux = {
@@ -106,6 +118,8 @@ struct Gate Mux = {
     .n_nands = 4,
     .n_inputs = 3,
     .n_outputs = 2,
+    .input_names = "A","B","Select",
+    .output_names = "Y",
     .Boolean_representation = "Y = A or Y = B"};
 
 struct Gate Demux = {
@@ -114,6 +128,8 @@ struct Gate Demux = {
     .n_nands = 5,
     .n_inputs = 2,
     .n_outputs = 1,
+    .input_names = "A","Select",
+    .output_names = "Y1","Y2",
     .Boolean_representation = "Y0 = A or Y1 = A"};
 
 void menu_item_1(void);
@@ -128,6 +144,7 @@ void menu_item_6(void);
 
 void print_gates(void);
 void select_gate(struct Gate *p, int display_choice);
+int create_file(void);
 
 #endif
 

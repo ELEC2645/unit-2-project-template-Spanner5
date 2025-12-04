@@ -1,24 +1,47 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <math.h>
-
-void hopefully_changes_values_in_character_array();
+/*
 
 
-int main(void)
+// C Implementation for lineto()
+#include <graphics.h>
+
+// driver code
+int main()
 {
-    
+    // gm is Graphics mode which is
+    // a computer display mode that
+    // generates image using pixels.
+    // DETECT is a macro defined in
+    // "graphics.h" header file
+    int gd = DETECT, gm;
+
+    // initgraph initializes the
+    // graphics system by loading a
+    // graphics driver from disk
+    initgraph(&gd, &gm, "");
+
+    // change initial position of point
+    // with moveto function
+    moveto(100, 100);
+
+    // lineto function
+    lineto(250, 100);
+
+    getch();
+
+    // closegraph function closes the
+    // graphics mode and deallocates
+    // all memory allocated by
+    // graphics system .
+    closegraph();
+
+    return 0;
 }
 
-void hopefully_changes_values_in_character_array(){
-    char* string_array[6];
-    printf("%c",string_array);
+*/
 
-    for (int i = 0;i<6;i++){
-        string_array[i] = "A";
-    }
-
-    printf("%c",string_array);
-    }
+int main()
+{
+        char x =  "A";
+        x = "eeeee";
+        return 0;
+}

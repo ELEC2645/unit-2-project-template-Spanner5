@@ -22,10 +22,12 @@ static void go_back_to_main(void);      /* wait for 'b'/'B' to continue */      
 
 static int  is_integer(const char *s);  /* validate integer string */             //              --- don't touch input validation
 
-
 int main(void)
 {
     menu_item_6(); // Running this function first to set all the labels and values for the created pins of the gates to zero
+
+    int create_file(); /* Create a text file to store the circuit design in,
+                       will update and load this text file as the circuit is created (and will save it throughout) */
 
     /* this will run forever until we call exit(0) in select_menu_item() */
     for(;;) {

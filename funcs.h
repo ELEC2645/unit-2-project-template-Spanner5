@@ -1,16 +1,16 @@
 #ifndef FUNCS_H
 #define FUNCS_H
 
-typedef enum { BINARY_CHOICE = 2, MENU_ITEMS = 7, GATE_OPTIONS = 8, MAX_NUMBER_OF_IO_PINS = 100, NUMBER_OF_PIN_LABELS = 6, MAX_LABEL_LENGTH = 10 } menu_items ;   // - defining an enum globally for use in input validation
+typedef enum { BINARY_CHOICE = 2, MENU_ITEMS = 7, GATE_OPTIONS = 8, MAX_NUMBER_OF_IO_PINS = 100, NUMBER_OF_PIN_LABELS = 6, MAX_LABEL_LENGTH = 15 } menu_items ;   // - defining an enum globally for use in input validation
 
 // OR maybe make an array and then replace each with another array
 
 char* array_of_io_labels[MAX_NUMBER_OF_IO_PINS][NUMBER_OF_PIN_LABELS][MAX_LABEL_LENGTH]; // making a character array where each term is an empty space for a label (of the variables used in the gates).
-//  limit of 10 characters per label name
+//  limit of 15 characters per label name
 
 /* in the main program, each slot of the array of io labels gets rewritten to:
-array_of_io_labels[i] = [pin_label,input_1,input_2,input_3,gate_type] // should I add is output or is input to the label? */
-
+Syntax: array_of_io_labels[i] = [pin_label, gate_type, internal_or_external_output?, input_1, input_2, input_3]
+*/
 
 int* array_of_io_values[MAX_NUMBER_OF_IO_PINS];
 /*

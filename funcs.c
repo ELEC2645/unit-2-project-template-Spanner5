@@ -205,7 +205,7 @@ void menu_item_2(void) {
 
 
         // NOW CALL FUNCTION FOR DISPLAYING THE GATE --- use "Input 1", etc to represent that the labels have not been assigned yet
- 
+        // for a mux or demux, the final input will always be the select bit
 
 
     // Now, code to ask the user to create labels for the gate
@@ -243,7 +243,7 @@ void menu_item_2(void) {
         for (int j = 0;j< p->n_inputs;j++){
             printf("\nPlease provide a label/name for an INPUT pin of the gate:     "); // Note: if referencing the same pin twice (e.g for an output used as an input),
                                                                                     // then need to match the name character for character - or at least .upper()
-            char inputlabel[MAX_LABEL_LENGTH] = {}; //limit of 10 characters
+            char inputlabel[MAX_LABEL_LENGTH] = {}; //limit of 15 characters
             fgets(inputlabel, sizeof(inputlabel), stdin); // got the label name for input
 
             input_names[j] = inputlabel; // storing the input labels in the array to use for displaying the gate with labels filled in
@@ -264,7 +264,7 @@ void menu_item_2(void) {
                     x = 999; // break the condition of the while loop and exit the loop because the input label is now made
                 }
                 strcpy(array_of_io_labels[x][2], "Internal"); /* Marking the input as an input to the system and therefore works internally
-                                                       (not a "true" output from the system to elsewhere)*/
+                                                              (if this was an output, it's not a "true" output from the system to elsewhere)*/
                 x++;
             }
 
@@ -285,7 +285,7 @@ void menu_item_2(void) {
         for (int l = 0; l< p->n_outputs; l++){ // for each of the outputs...
             printf("\nPlease provide a label/name for an OUTPUT pin of the gate:     "); // Note: if referencing the same pin twice (e.g for an output used as an input),
                                                                                          // then need to match the name character for character - or at least .upper()
-            char outputlabel[MAX_LABEL_LENGTH] = {}; //limit of 10 characters
+            char outputlabel[MAX_LABEL_LENGTH] = {}; //limit of 15 characters
             fgets(outputlabel, sizeof(outputlabel), stdin); // got the label name for output
            
             strcpy(array_of_io_labels[first_output_index + l][2], "External"); /* Because the outputs are new, and haven't yet been used as a input,
@@ -300,7 +300,7 @@ void menu_item_2(void) {
                 // first, need to check if the label has already an existing pin, checking through whole array of labels
                 if (array_of_io_labels[x][0] == outputlabel){
                     for (int m = 0; m<6; m++){ // 6 is number of parameters in each io label array for a single pin
-                        strcpy(array_of_io_labels[x][m], "unassigned"); /* resetting the pin to avoid duplicates.
+                        strcpy(array_of_io_labels[x][m], "destroyed"); /* resetting the pin to avoid duplicates.
                                                                  The original had less information, so it was destroyed.*/
                     }
                     x = 999; // original pin destroyed, job done, so break the condition of the while loop
@@ -316,13 +316,21 @@ void menu_item_2(void) {
         // Will ALSO NEED A FUNCTION FOR MAKING, SAVING AND DISPLAYING THE CIRCUIT TEXT FILE after EACH GATE
 
 
+        // Before, running the circuit, ask the user if they'd like to add another gate to the circuit
+        printf("Would you like to add a new gate to the circuit or run it? Enter 1 for yes, 0 for no:   ");
+        int choice = get_user_input(BINARY_CHOICE);
 
-        // Now, can make a separate function for determining the workings of interconnected gates and the nature of raw inputs.
+        switch (choice) {
+            case 1:
+                menu_item_2();
+            case 2:
+                run_circuit();
+            default:
+                printf("Invalid input! Running Circuit.\n(You can always add to the circuit after it runs).\n");
+                run_circuit();
+        }
 
-        run_circuit();
-
-
-    main_menu(); // return to main_menu at the end
+    main_menu(); // return to main_menu at the end of running the circuit --- double check if this is redundant
 }
 
 void run_circuit(void){
@@ -334,8 +342,77 @@ void run_circuit(void){
     */
 
     int i = 0;
-    while(i<MAX_NUMBER_OF_IO_PINS & array_of_io_labels[i][0] != "unassigned"){
-        int index_of_pin_value = i;
+    int j;
+    int input_1;
+    int input_2;
+    int input_3;
+    while(i<MAX_NUMBER_OF_IO_PINS && array_of_io_labels[i][0] != "unassigned"){ // looking through all pins that have been used
+        
+        /*
+        --------------------
+         Still need to find a way to input the inputs using a test script format.
+        --------------------
+        */
+        
+        
+        if (array_of_io_labels[i][0] != "destroyed" && array_of_io_labels[i][3] == "unassigned"){
+            /* only do the following if a pin has not been destroyed and is not a pure input.
+            ("Pure input" means a pin is not created as an output of any gate, so the 1st input pin for the pin's labels must be unassigned) */
+
+            // i = the position of the pin we're currently focusing on - also it is by desgin the position of the pin value for this pin in the array_of_io_values
+
+            j = 0;
+            while (j<MAX_NUMBER_OF_IO_PINS && array_of_io_labels[j][0] != "unassigned"){ // again, looking through all pins that have been used
+
+                if (array_of_io_labels[j][0] == array_of_io_labels[i][3]){ // if the current pin label in the array is equal to the 1st input label of the pin we're currently focusing on
+                    input_1 = array_of_io_values[j];                   // then the corresponding pin value of the pin label is taken as an input value for the pin we're currently focusing on.
+                }
+                if (array_of_io_labels[j][0] == array_of_io_labels[i][4]){ // if the current pin label in the array is equal to the 2nd input label of the pin we're currently focusing on
+                    input_2 = array_of_io_values[j];                   // then the corresponding pin value of the pin label is taken as an input value for the pin we're currently focusing on.
+                }
+                if (array_of_io_labels[j][0] == array_of_io_labels[i][5]){ // if the current pin label in the array is equal to the 3rd input label of the pin we're currently focusing on
+                    input_3 = array_of_io_values[j];                   // then the corresponding pin value of the pin label is taken as an input value for the pin we're currently focusing on.
+                }
+            }
+            
+            // Now that we've found the inputs for the pin, we need to pass them through the correct logic gate to generate the pin value
+            // To decide the gate, we use the gate label to choose.
+
+            char gate_label = array_of_io_labels[j][1];
+            if (gate_label == "NAND"){
+                array_of_io_values[i] = ;
+            }
+            else if (gate_label == "NOT"){
+                array_of_io_values[i] = ;
+            }
+            else if (gate_label == "AND"){
+                array_of_io_values[i] = input_1 & input_2;
+            }
+            else if (gate_label == "OR"){
+                array_of_io_values[i] = input_1 | input_2;
+            }
+            else if (gate_label == "XOR"){
+                array_of_io_values[i] = ;
+            }
+            else if (gate_label == "Buffer"){
+                array_of_io_values[i] = ;
+            }
+            else if (gate_label == "Mux"){
+                array_of_io_values[i] = ;
+            }
+            else if (gate_label == "Demux"){
+                array_of_io_values[i] = ;
+            }
+            
+
+
+
+
+
+        }
+        i++;
+        
+
 
     }
 

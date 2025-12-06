@@ -25,6 +25,8 @@ Maybe attach a metadata for each value in THIS ARRAY which increments every time
 Then when the output variable(s) will have been used zero times.
 */
 
+int does_circuit_exist = 0; // defining this variable to be updated and used to check whether a circuit exists and thus whether some functions can run
+
 struct Gate{
     char name[10];
     int diagram; // just a placeholder for calling the function for diagram
@@ -117,20 +119,20 @@ struct Gate Mux = {
     .diagram = 0,//"Need to load the diagram or print it using ASCII",
     .n_nands = 4,
     .n_inputs = 3,
-    .n_outputs = 2,
+    .n_outputs = 1,
     .input_names = "A","B","Select",
     .output_names = "Y",
-    .Boolean_representation = "Y = A or Y = B"};
+    .Boolean_representation = "Y = A or Y = B"}; // A if sel == 0, b if 1
 
 struct Gate Demux = {
     .name = "Demux",
     .diagram = 0,//Need to load the diagram or print it using ASCII",
     .n_nands = 5,
     .n_inputs = 2,
-    .n_outputs = 1,
+    .n_outputs = 2,
     .input_names = "A","Select",
     .output_names = "Y1","Y2",
-    .Boolean_representation = "Y0 = A or Y1 = A"};
+    .Boolean_representation = "Y0 = A or Y1 = A"}; // Y0 if sel == 0, Y1 if 1
 
 void menu_item_1(void);
 void menu_item_2(void);

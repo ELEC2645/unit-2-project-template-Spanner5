@@ -3,8 +3,6 @@
 
 void menu_item_1(void) {
     printf("\n>> Menu 1: Logic Gate Information\n");
-    printf("\nSome code here does something useful\n");
-    /* you can call a function from here that handles menu 1 */
 
     /*
     First, a sub-menu for options to select the gates:  (select which gate to display information for (enter a number))
@@ -98,8 +96,6 @@ void select_gate(struct Gate *p, int display_choice) // // A function which poin
 
 void menu_item_2(void) {
     printf("\n>> Menu 2: Make Logic Circuit\n");
-    printf("\nSome code here does something useful\n");
-    /* you can call a function from here that handles menu 2 */
 
     /*
     Ideas:
@@ -208,6 +204,8 @@ void menu_item_2(void) {
         // for a mux or demux, the final input will always be the select bit
 
 
+
+
     // Now, code to ask the user to create labels for the gate
 
         int x; // establishing an incrementer for a while loop
@@ -241,7 +239,7 @@ void menu_item_2(void) {
 
         // 2nd, managing the input pins
         for (int j = 0;j< p->n_inputs;j++){
-            printf("\nPlease provide a label/name for an INPUT pin of the gate:     "); // Note: if referencing the same pin twice (e.g for an output used as an input),
+            printf("\nPlease provide a label/name for an INPUT pin %d the gate. (Each label is limited to %d characters):     ",j,MAX_LABEL_LENGTH); // Note: if referencing the same pin twice (e.g for an output used as an input),
                                                                                     // then need to match the name character for character - or at least .upper()
             char inputlabel[MAX_LABEL_LENGTH] = {}; //limit of 15 characters
             fgets(inputlabel, sizeof(inputlabel), stdin); // got the label name for input
@@ -283,8 +281,10 @@ void menu_item_2(void) {
 
         // 4th managing the output pins fully
         for (int l = 0; l< p->n_outputs; l++){ // for each of the outputs...
-            printf("\nPlease provide a label/name for an OUTPUT pin of the gate:     "); // Note: if referencing the same pin twice (e.g for an output used as an input),
-                                                                                         // then need to match the name character for character - or at least .upper()
+            printf("\nPlease provide a label/name for an INPUT pin %d the gate. (Each label is limited to %d characters):     ",l,MAX_LABEL_LENGTH);
+            // Note: if referencing the same pin twice (e.g for an output used as an input),
+            // then need to match the name character for character - or at least .upper()
+
             char outputlabel[MAX_LABEL_LENGTH] = {}; //limit of 15 characters
             fgets(outputlabel, sizeof(outputlabel), stdin); // got the label name for output
            
@@ -314,27 +314,58 @@ void menu_item_2(void) {
        
 
         // Will ALSO NEED A FUNCTION FOR MAKING, SAVING AND DISPLAYING THE CIRCUIT TEXT FILE after EACH GATE
+        
 
 
-        // Before, running the circuit, ask the user if they'd like to add another gate to the circuit
-        printf("Would you like to add a new gate to the circuit or run it? Enter 1 for yes, 0 for no:   ");
+
+        does_circuit_exist = 1; /* This updates the status and allows for functions to run the circuit
+                                - provided no other factors are  unsatisfied */
+
+        // Before finally exiting to the main menu, ask the user if they'd like to add another gate to the circuit
+        
+        printf("Would you like to add a new gate to the circuit or return to main menu? Enter 1 for yes, 0 for no:   ");
         int choice = get_user_input(BINARY_CHOICE);
 
         switch (choice) {
             case 1:
-                menu_item_2();
+                menu_item_2(); // if they want to add another gate, then recall the function
             case 2:
-                run_circuit();
+                main_menu();
             default:
-                printf("Invalid input! Running Circuit.\n(You can always add to the circuit after it runs).\n");
-                run_circuit();
+                printf("Invalid input! Returning to main menu.\n(You can always add to the circuit after it runs).\n");
+                main_menu();
         }
+}
 
-    main_menu(); // return to main_menu at the end of running the circuit --- double check if this is redundant
+void menu_item_3(void) {
+    printf("\n>> Menu 3: Make Test Script\n");
+
+    /*
+    Allows user to enter to decide how many variables, variable names, outputs, then the variables will increment as normal, but the user will enter the output value for each output on a row
+    */
+    printf("\nFirstly, how many inputs are there to the circuit (not including internal pins between logic gates)?\nEnter a single number:    ");
+    int Ninput;
+    scanf("%d",&Ninput); // Scanf should suffice, because we just want a single integer
+
+    printf("\nPlease enter the label names for each input one at a time when prompted.\nEach label is limited to %d characters.\nNOTE: Please make sure that the input pin labels entered here match the input pin labels of the circuit - or the program WILL BREAK\n.",MAX_LABEL_LENGTH);
+    char array_of_input_labels[Ninput][MAX_LABEL_LENGTH]; /* the size of the array is determined by how many inputs the user makes,
+                                                             which makes it more memory efficient and easier to insert the user inputs*/
+    
+    for (int i = 0; i < Ninput; i++){
+        printf("Enter the label name for input number %d",i+1);
+        fgets(array_of_input_labels, MAX_LABEL_LENGTH, stdin); // stores the input label name in the array of input labels
+    }
+
+    // now outputs
+
+    // then make a table 
+
+    // by printing arrays of the inputs and get users to write outputs.   :)
+    
+
 }
 
 void run_circuit(void){
-
     /*
     Loop through the pin_label array until hit unassigned for the value.
     For each pin label, use its corresponding index in the value array and set it equal to the operation
@@ -380,10 +411,10 @@ void run_circuit(void){
 
             char gate_label = array_of_io_labels[j][1];
             if (gate_label == "NAND"){
-                array_of_io_values[i] = ;
+                array_of_io_values[i] = ~(input_1 & input_2);
             }
             else if (gate_label == "NOT"){
-                array_of_io_values[i] = ;
+                array_of_io_values[i] = ~input_1;
             }
             else if (gate_label == "AND"){
                 array_of_io_values[i] = input_1 & input_2;
@@ -392,62 +423,85 @@ void run_circuit(void){
                 array_of_io_values[i] = input_1 | input_2;
             }
             else if (gate_label == "XOR"){
-                array_of_io_values[i] = ;
+                array_of_io_values[i] = input_1 ^ input_2;
             }
             else if (gate_label == "Buffer"){
-                array_of_io_values[i] = ;
+                array_of_io_values[i] = input_1;
             }
             else if (gate_label == "Mux"){
-                array_of_io_values[i] = ;
+
+                if (input_3 == 0){
+                    array_of_io_values[i] = input_1;
+                }
+                else if (input_3 == 1){
+                    array_of_io_values[i] = input_2;
+                }
             }
             else if (gate_label == "Demux"){
-                array_of_io_values[i] = ;
+                
+                /*
+                Need to check WHICH output of the demux this is. So, let's see if there is a previous mux output with the SAME inputs.
+                If there isn't a previous mux with the same inputs, then this output is Y0.
+                If there is, then the previous output is Y0. So this output is Y1.
+                We'll need to look at the labels either side of this input's labels.
+                */
+                int match = 0;
+                for (int a = 1; a < NUMBER_OF_PIN_LABELS ; a++ ){
+                    if(array_of_io_labels[i][a] == array_of_io_labels[i+1][a]){ // checking if this pin's labels match the labels of the next pin
+                        match++; // in which case, this output is the 1st demux output Y0
+                    }
+                    if(array_of_io_labels[i][a] == array_of_io_labels[i-1][a]){ // checking if this pin's labels match the labels of the previous pin
+                        match--; // in which case, this output is the 2nd demux output Y1
+                    }
+                    else{
+                        printf("The mux outputs need to be determined better"); // this means I've coded something wrong
+                        exit(1);
+                    }
+                }
+
+                switch (match){
+                    case +5:                                // Y = Y0:
+                        if (input_2 == 0){                      // select == 0:
+                            array_of_io_values[i] = input_1;        // Y0 = A
+                        }
+                        else if (input_2 == 1){                 // select == 1:
+                            array_of_io_values[i] = 0;              // Y0 = 0
+                        }
+                    case -5:                                // Y = Y1:
+                        if (input_2 == 0){                      // select == 0:
+                            array_of_io_values[i] = input_1;        // Y1 = 0
+                        }
+                        else if (input_2 == 1){                 // select == 1: 
+                            array_of_io_values[i] = 0;              // Y1 = A
+                        }
+                }
             }
-            
-
-
-
-
-
         }
-        i++;
-        
-
-
+        i++; /* Increment i after each pin value has been decided. 
+                After going through all the pins, the output should have been generated. */
     }
-
-}
-
-void menu_item_3(void) {
-    printf("\n>> Menu 3: Make Test Script\n");
-    printf("\nSome code here does something useful\n");
-    /* you can call a function from here that handles menu 3 */
-
-    /*
-    Allows user to enter to decide how many variables, variable names, outputs, then the variables will increment as normal, but the user will enter the output value for each output on a row
-    */
-
 }
 
 void menu_item_4(void) {
     printf("\n>> Menu 4: Run Test Script\n");
-    printf("\nSome code here does something useful\n");
 
     /*
+    Firstly, need to check if a circuit has been made.
     Need to load a test script as a text file.
     Then convert to array? Or run the make test script or generate truth table of the circuit and see if it matches. If not, for that row print the actual value, error and the value it should be
     */
 
-    /* you can call a function from here that handles menu 4 */
+    if (does_circuit_exist = 0){
+        printf("There is no circuit detected");
+    }
 }
 
 void menu_item_5(void) {
     printf("\n>> Menu 5: Generate Truth Table of Circuit\n");
-    printf("\nSome code here does something useful\n");
-    /* you can call a function from here that handles menu 5 */
-   
+
     /*
-    First, check if a circuit exists, if not - return to menu
+    First, check if a circuit exists, if not - return to menu.
+    Will run 
     Basically, just need to run the circuit for each possible input and record output in a table., (Print an array). Use iterative for loop from i of msb, j of less msb, ... z of lowest msb
     e.g. for i(...){ for j(...){ for z(... )}}
 
@@ -456,9 +510,7 @@ void menu_item_5(void) {
 
 void menu_item_6(void) {
     printf("\n>> Clearing previous circuit...\n");
-    printf("\nSome code here does something useful\n");
-    /* you can call a function from here that handles menu 6 */
-   
+
     /*
     This function clears the array of labels and the array of values by setting all the values in the labels to "unassigned" and all the values in the values array to 0
     */

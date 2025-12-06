@@ -41,7 +41,7 @@ int main()
 
 int main()
 {
-        char x =  "A";
+        char x = "A";
         x = "eeeee";
         return 0;
 }

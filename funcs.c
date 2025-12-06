@@ -159,9 +159,9 @@ void menu_item_2(void) {
     (just increment a value in a loop). The value which has not been referenced is therefore an output.
 
     NOTE: SHOULD keep duplicate pin labels for the sake of indexing the pointers.
-    
+   
     // chose not to, because when making circuit, pointers are made based off of value anyway.
-    // But feedback loops might now be impossible. But they weren't ever really. 
+    // But feedback loops might now be impossible. But they weren't ever really.
 
     NOTE: need to store the pointers for each label in same ndex as the label, for simplicity, even though different arrays.
 
@@ -180,8 +180,7 @@ void menu_item_2(void) {
 
     Finally, ask the user if they'd like to add another gate to the circuit.
     If not, then run the make test script function IN THE BACKGROUND and notify the user that it's been made.
-    Then return to MAIN (not main menu, to  reset the gate.) The only time main menu is returned to is when there's an error in the input.
-    And the gate is not destroyed intermittently.
+    Then return to main menu.
 
 111111111111111111111111111111111111111111111111111111111111
 
@@ -232,7 +231,7 @@ void menu_item_2(void) {
             // Now to prime the output slots
             else if (array_of_io_labels[x][0] != "unassigned"){ // looking for the first unassigned pin label slot
                 for (int i = 0; i< p->n_outputs; i++){ // for each of the outputs...    
-                    array_of_io_labels[x][0][10] = "temp"; // ..if unassigned, fill in the output pin labels with a temporary marker, and to stop any new inputs from filling the slot
+                    strcpy(array_of_io_labels[x][0], "temp"); // ..if unassigned, fill in the output pin labels with a temporary marker, and to stop any new inputs from filling the slot
                 }
                 first_output_index = x; // recording the index of the 1st output of this gate to use later when assign labels to it and the other outputs
                 x = 999; // break the condition of the while loop and exit the loop because the ouput pins are now ready
@@ -244,10 +243,10 @@ void menu_item_2(void) {
         for (int j = 0;j< p->n_inputs;j++){
             printf("\nPlease provide a label/name for an INPUT pin of the gate:     "); // Note: if referencing the same pin twice (e.g for an output used as an input),
                                                                                     // then need to match the name character for character - or at least .upper()
-            char inputlabel[15] = {}; //limit of 15 characters
+            char inputlabel[MAX_LABEL_LENGTH] = {}; //limit of 10 characters
             fgets(inputlabel, sizeof(inputlabel), stdin); // got the label name for input
 
-            input_names[j] = inputlabel; // storing the input labels in the array to use for displaying the gate with labels filled in 
+            input_names[j] = inputlabel; // storing the input labels in the array to use for displaying the gate with labels filled in
 
             // Now to assign the input pin label name to a label in the io_label array
             // Need to search through the array for the first slot where there is no pin label already filled
@@ -261,24 +260,24 @@ void menu_item_2(void) {
                 }
 
                 else if (array_of_io_labels[x][0] != "unassigned"){ // looking for the first unassigned pin label slot
-                    array_of_io_labels[x][0][10] = inputlabel; // if unassigned, fill in the pin label with the user input
+                    strcpy(array_of_io_labels[x][0], inputlabel); // if unassigned, fill in the pin label with the user input
                     x = 999; // break the condition of the while loop and exit the loop because the input label is now made
                 }
-                array_of_io_labels[x][2][10] = "Internal"; /* Marking the input as an input to the system and therefore works internally
+                strcpy(array_of_io_labels[x][2], "Internal"); /* Marking the input as an input to the system and therefore works internally
                                                        (not a "true" output from the system to elsewhere)*/
                 x++;
             }
 
             // 3rd, storing labels in the the output pins
             for (int k = 0; k< p->n_outputs; k++){ // for each of the outputs...
-                array_of_io_labels[first_output_index + k][3 + j][10] = inputlabel;
+                strcpy(array_of_io_labels[first_output_index + k][3 + j], inputlabel);
                 /* In the above line, the output slots, starting from the indexed slot (& continuing up to the last (kth) output)
                 (hence [first_output_index + k] ),the jth input label is placed in the jth input label slot (not the pin name/label,
                 but the slot for storing the inputs used to create a pin) of the output pin
                 (which starts at the 4th slot of a given output label array, hence [1 + j]).
                 So, each input for a given output has its label stored in the output's label array for later use in using the gates later.
                 */
-                array_of_io_labels[first_output_index + k][1][10] = p->name; // recording the gate type in the slot for gate types in the output's label array
+                strcpy(array_of_io_labels[first_output_index + k][1], p->name); // recording the gate type in the slot for gate types in the output's label array
             }
         }
 
@@ -286,22 +285,22 @@ void menu_item_2(void) {
         for (int l = 0; l< p->n_outputs; l++){ // for each of the outputs...
             printf("\nPlease provide a label/name for an OUTPUT pin of the gate:     "); // Note: if referencing the same pin twice (e.g for an output used as an input),
                                                                                          // then need to match the name character for character - or at least .upper()
-            char outputlabel[15] = {}; //limit of 15 characters
+            char outputlabel[MAX_LABEL_LENGTH] = {}; //limit of 10 characters
             fgets(outputlabel, sizeof(outputlabel), stdin); // got the label name for output
-            
-            array_of_io_labels[first_output_index + l][2][10] = "External"; /* Because the outputs are new, and haven't yet been used as a input,
+           
+            strcpy(array_of_io_labels[first_output_index + l][2], "External"); /* Because the outputs are new, and haven't yet been used as a input,
                                                                         their connections are external and thus a "TRUE" output from the circuit  */
-            array_of_io_labels[first_output_index + l][0][10] = outputlabel; // naming the output gate using the user input
+            strcpy(array_of_io_labels[first_output_index + l][0], outputlabel); // naming the output gate using the user input
 
             output_names[l] = outputlabel; // storing the output labels in the array to use for displaying the gate with labels filled in
 
             // checking if an output variable has ALREADY been used as an input (in the case of feedback)
-            x = 0; 
+            x = 0;
             while ( x<MAX_NUMBER_OF_IO_PINS){
                 // first, need to check if the label has already an existing pin, checking through whole array of labels
                 if (array_of_io_labels[x][0] == outputlabel){
                     for (int m = 0; m<6; m++){ // 6 is number of parameters in each io label array for a single pin
-                        array_of_io_labels[x][m][10] = "unassigned"; /* resetting the pin to avoid duplicates.
+                        strcpy(array_of_io_labels[x][m], "unassigned"); /* resetting the pin to avoid duplicates.
                                                                  The original had less information, so it was destroyed.*/
                     }
                     x = 999; // original pin destroyed, job done, so break the condition of the while loop
@@ -309,10 +308,10 @@ void menu_item_2(void) {
             } // Feedback probably isn't possible with this version of the code, but that's not a main part of it,
               // there aren't currently clock cycles anyway.
         }
-    
+   
         // NOW CALL FUNCTION FOR DISPLAYING THE GATE
 
-        
+       
 
         // Will ALSO NEED A FUNCTION FOR MAKING, SAVING AND DISPLAYING THE CIRCUIT TEXT FILE after EACH GATE
 
@@ -320,10 +319,26 @@ void menu_item_2(void) {
 
         // Now, can make a separate function for determining the workings of interconnected gates and the nature of raw inputs.
 
-
+        run_circuit();
 
 
     main_menu(); // return to main_menu at the end
+}
+
+void run_circuit(void){
+
+    /*
+    Loop through the pin_label array until hit unassigned for the value.
+    For each pin label, use its corresponding index in the value array and set it equal to the operation
+    (decided by the gate label) of the values in the labels (addresses) of the input pins.
+    */
+
+    int i = 0;
+    while(i<MAX_NUMBER_OF_IO_PINS & array_of_io_labels[i][0] != "unassigned"){
+        int index_of_pin_value = i;
+
+    }
+
 }
 
 void menu_item_3(void) {
@@ -372,14 +387,13 @@ void menu_item_6(void) {
     */
     int n = 6; // n is the number of parameters in the sub arrays in the array of labels. Can be adjusted to scale for more inputs.
     for (int i; i<MAX_NUMBER_OF_IO_PINS; i++){           // An overarching for loop that goes through the whole label array
-        for (int j; j<n; j++){                             // Now looping through the array in position i of the labels array
-            array_of_io_labels[i][j][10] = "unassigned";        // Setting each value in that array to "unassigned". To reset the values to a known default.
+        for (int j; j<n; j++){                             // Now looping through the array in position i of the labels array      
+            strcpy(array_of_io_labels[i][j],"unassigned");  // Setting each value in that array to "unassigned". To reset the values to a known default.
         }
 
-        // THAT WOULD JUST CREATE AN ARRAY OF SINGLE CHARACTERS, WOULD NEED TO CHANGE the function to make the size of the length of the array, the buffer size and read every buffer size
-        // OR is it possible to resize each value in the initial array to be equal to "unassigned"?
+        //strcpy(array_of_io_labels[i][j],"unassigned");  --- This is the correst way to overwrite a string
 
-        //strcpy(array_of_io_labels[i][j],"unassigned");
+        //array_of_io_labels[i][j] = "unassigned";  --- This doesn't work because you can't just reassign the string
 
         /* setting all the values in the array of input & output labels to unassigned,
         to ensure that the values are all reset before starting the next circuit */
@@ -389,9 +403,9 @@ void menu_item_6(void) {
     /*
     Syntax: array_of_io_labels[i] = [pin_label, gate_type, internal_or_external_output?, input_1, input_2, input_3] // should I add is output or is input to the label?
     */
-    
+   
     /*
-    Note: can determine if a pin is an external input if it has no inputs into the pin, 
+    Note: can determine if a pin is an external input if it has no inputs into the pin,
     and can determine an output if the internal_or_external_output? value is still 1
     (if zero or less, it's an internal output or an input).
 
@@ -409,7 +423,7 @@ void menu_item_6(void) {
 
 
 int create_file() {
-    
+   
     // File pointer
     FILE* fptr;
 
@@ -418,15 +432,15 @@ int create_file() {
     fptr = fopen("Circuit.txt", "w");
 
     // checking if the file is created
-    if (fptr == NULL) 
+    if (fptr == NULL)
         printf("The file is not opened.");
-    else 
+    else
         printf("The file is created Successfully.");
     return 0;
 }
 
 int write_to_file(custom_gate) {
-    
+   
     // File pointer
     FILE* fptr;
 
@@ -435,7 +449,7 @@ int write_to_file(custom_gate) {
     fptr = fopen("Circuit.txt", "w");
 
     // Checking if the file is created
-    if (fptr == NULL) 
+    if (fptr == NULL)
         printf("The file is not opened.");
     else{
         //printf("The file is now opened.\n"); - not going to use this line

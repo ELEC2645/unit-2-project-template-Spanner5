@@ -16,7 +16,7 @@ void menu_item_1(void) {
 
     printf("\nSelect which gate to display information for (enter a number)\n"); // getting user input
     print_gates();  // displaying the gate options
-    menu_items number_of_possible_inputs = GATE_OPTIONS;
+    important_constants number_of_possible_inputs = GATE_OPTIONS;
     int display_choice = get_user_input(number_of_possible_inputs); // retreiving and validating the input
 
     struct Gate *p = &NAND; // initialising a pointer for a gate, setting it to NAND by default
@@ -37,7 +37,7 @@ void menu_item_1(void) {
     printf("Boolean_representation: %c",p->Boolean_representation);
    
     printf("Would you like to display information for another gate?\n(Enter 1 for yes, 0 for no)    ");
-    menu_items two_options = BINARY_CHOICE;
+    important_constants two_options = BINARY_CHOICE;
     int yes_no = get_user_input(two_options);
     if (yes_no == 1){
         menu_item_1();
@@ -193,7 +193,7 @@ void menu_item_2(void) {
 
     // Code to select and display chosen logic gate:
         print_gates();  // displaying the gate options
-        menu_items number_of_possible_inputs = GATE_OPTIONS;
+        important_constants number_of_possible_inputs = GATE_OPTIONS;
         int gate_choice = get_user_input(number_of_possible_inputs); // retreiving and validating the input - a number corresponding to the correct gate
         struct Gate *p = &NAND; // initialising a pointer for a gate, setting it to NAND by default
         select_gate(p, gate_choice); // calls a function which points the pointer towards the correct gate
@@ -338,7 +338,26 @@ void menu_item_2(void) {
 }
 
 void menu_item_3(void) {
-    printf("\n>> Menu 3: Make Test Script\n");
+    printf("\n>> Menu 3: Circuit Testing\n");
+
+    // Before running this menu's functionality, we need to check if there's actually a circuit for this test script
+    if (does_circuit_exist = 0){
+        printf("\nThere is no circuit detected. Please make a circuit before making and running a test script.\nReturning to Main Menu.\n");
+        main_menu();
+    }
+
+    // Now, ask the user if they'd like to make or run the test script or generate a truth table for the circuit
+    printf("\nPlease select a function:\n\n");
+    print_circuit_testing_menu();
+    printf("\nEnter a number:   ");
+    int option = get_user_input(CIRCUIT_TESTING_MENU_ITEMS);
+
+
+
+
+
+
+
 
     /*
     Allows user to enter to decide how many variables, variable names, outputs, then the variables will increment as normal, but the user will enter the output value for each output on a row
@@ -355,7 +374,7 @@ void menu_item_3(void) {
                                                              which makes it more memory efficient and easier to insert the user inputs*/
     
     for (int i = 0; i < Ninput; i++){
-        printf("Enter the label name for INPUT number %d:   ",i+1);
+        printf("\nEnter the label name for INPUT number %d:   ",i+1);
         fgets(array_of_input_labels, MAX_LABEL_LENGTH, stdin); // stores the input label name in the array of input labels
     }
 
@@ -370,9 +389,16 @@ void menu_item_3(void) {
                                                             which makes it more memory efficient and easier to insert the user inputs*/
     
     for (int j = 0; j < Noutput; j++){
-        printf("Enter the label name for OUTPUT number %d:  ",j+1);
+        printf("\nEnter the label name for OUTPUT number %d:  ",j+1);
         fgets(array_of_output_labels, MAX_LABEL_LENGTH, stdin); // stores the input label name in the array of input labels
     }
+
+    /*
+    The next step is to ask the user the output values for each combination of input values
+    this will be done with a for loop so the prompt has to be given outside it:
+    */
+
+    printf("\nFor each of the following combinations of inputs, please enter the value of the outputs as they appear.\nJust enter a 1 or 0.");
 
     // Now, we need to create all the possible input combinations
     
@@ -389,6 +415,7 @@ void menu_item_3(void) {
     */
 
     int array_of_input_combos[number_of_input_combinations][Ninput]; // This array will contain each combination of inputs as a row, and each inputs value as a column
+    int array_of_expected_outputs[number_of_input_combinations][Noutput]; // Also, the array of expected outputs has as many rows as there are input combinations
 
     /*
     need to begin with row 1, everything is zero. Then increment the last value in the row.
@@ -408,12 +435,57 @@ void menu_item_3(void) {
         int combo_value = k;
         // need to relate each bit to a multiplier based on Ninput - the position ,then subtract from k
         
+        for (int l = 0; l < Ninput; l++){ // For each input in a row
+
+            int value_of_bit = pow(2, Ninput - l); // e.g. for 4 bits, the 0th bit (the HSB) has value 8. Which is 2^(4-1).
+
+            if (combo_value - value_of_bit >= 0 ){  // In this case, the bit is less than or equal to the combination value (e.g. combination 7, or 00000111)
+                array_of_input_combos[k][l] = 1;    // So, the bit can be used to represent part of this value.
+                combo_value = k - value_of_bit;     // The remaining value of the combination is then compared to the other bit values until it's been represented
+            }
+            else if (combo_value - value_of_bit < 0 ){ // Eventually, once the combination value will have been represented by bits. Any following bits are 0.
+                array_of_input_combos[k][l] = 0;
+            }
+        }
+
+        // Now that the input bits for this combination have been established, we need to establish the outputs.
+        // We want the user to enter the output values for each input combination as it comes.
+
+        // The first part of the test script will be all the pin labels at the top
+        printf("\nWhen:\n%s\n%s\n",array_of_input_labels,array_of_input_combos);
+
+        for (int m = 0; m < Noutput; m++){
+            printf("\nWhat is the value of %s:  ",array_of_output_labels[m]);
+            array_of_expected_outputs[k][m] = get_user_input(BINARY_CHOICE);
+        }
+    }   
+    printf("\n\nFinal Test Script:\n%s %s\n",array_of_input_labels,array_of_output_labels);
+    for (int n = 0; n < number_of_input_combinations; n++){
+        printf("\n%s %s\n\n",array_of_input_combos[n], array_of_expected_outputs[n]);
     }
-    
+    // NEED TO SEND THESE SOMEWHERE: return array_of_input_labels, array_of_output_labels, array_of_input_combos, array_of_expected_outputs;
 
-    // by printing arrays of the inputs and get users to write outputs.   :)
-    
 
+
+
+
+
+
+
+
+}
+
+static void print_circuit_testing_menu(void)
+{
+    printf("\n---------- Circuit Testing Menu ----------\n");
+    printf("\n"
+           "\t\t\t\t\t\t\n"
+           "\t1. Make Test Script\t\t\n"
+           "\t2. Run Test Script\t\t\n"
+           "\t3. Generate Truth Table of Circuit\t\t\n"
+           "\t4. Exit to Main Menu\t\t\n"
+           "\t\t\t\t\t\t\n");
+    printf("---------------------------------------------\n");
 }
 
 void run_circuit(void){
@@ -545,21 +617,8 @@ void run_circuit(void){
     }
 }
 
-void menu_item_4(void) {
-    printf("\n>> Menu 4: Run Test Script\n");
-
-    /*
-    Firstly, need to check if a circuit has been made using the make test script functio - need to pass it as a parameter or another global array.
-    Then convert to array? Or run the make test script or generate truth table of the circuit and see if it matches. If not, for that row print the actual value, error and the value it should be
-    */
-
-    if (does_circuit_exist = 0){
-        printf("There is no circuit detected");
-    }
-}
-
-void menu_item_5(void) {
-    printf("\n>> Menu 5: Generate Truth Table of Circuit\n");
+void Generate_Truth_Table(void) {
+    printf("\n>> Circuit Testing Menu 3: Generate Truth Table\n");
 
     /*
     First, check if a circuit exists, if not - return to menu.
@@ -570,8 +629,8 @@ void menu_item_5(void) {
     */
 }
 
-void menu_item_6(void) {
-    printf("\n>> Clearing previous circuit...\n");
+void menu_item_4(void) {
+    printf("\n>> Menu 4: Clearing previous circuit...\n");
 
     /*
     This function clears the array of labels and the array of values by setting all the values in the labels to "unassigned" and all the values in the values array to 0

@@ -1,7 +1,8 @@
 #ifndef FUNCS_H
 #define FUNCS_H
 
-typedef enum { BINARY_CHOICE = 2, MENU_ITEMS = 7, GATE_OPTIONS = 8, MAX_NUMBER_OF_IO_PINS = 100, NUMBER_OF_PIN_LABELS = 6, MAX_LABEL_LENGTH = 15 } menu_items ;   // - defining an enum globally for use in input validation
+
+typedef enum { BINARY_CHOICE = 2, MENU_ITEMS = 5, GATE_OPTIONS = 8, MAX_NUMBER_OF_IO_PINS = 100, NUMBER_OF_PIN_LABELS = 6, MAX_LABEL_LENGTH = 15, CIRCUIT_TESTING_MENU_ITEMS = 4 } important_constants ;   // - defining an enum globally for use in input validation
 
 // OR maybe make an array and then replace each with another array
 
@@ -138,9 +139,6 @@ void menu_item_1(void);
 void menu_item_2(void);
 void menu_item_3(void);
 void menu_item_4(void);
-void menu_item_5(void);
-void menu_item_6(void);
-
 
 // MY INTERNAL FUNCTIONS for within the 6 menu options
 

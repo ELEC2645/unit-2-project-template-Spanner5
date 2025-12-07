@@ -343,22 +343,98 @@ void menu_item_3(void) {
     /*
     Allows user to enter to decide how many variables, variable names, outputs, then the variables will increment as normal, but the user will enter the output value for each output on a row
     */
-    printf("\nFirstly, how many inputs are there to the circuit (not including internal pins between logic gates)?\nEnter a single number:    ");
+
+    // First, create an array of input labels based on user input
+
+    printf("\nFirstly, how many INPUTS are there to the circuit (not including internal pins between logic gates)?\nEnter a single number:    ");
     int Ninput;
     scanf("%d",&Ninput); // Scanf should suffice, because we just want a single integer
 
-    printf("\nPlease enter the label names for each input one at a time when prompted.\nEach label is limited to %d characters.\nNOTE: Please make sure that the input pin labels entered here match the input pin labels of the circuit - or the program WILL BREAK\n.",MAX_LABEL_LENGTH);
+    printf("\nPlease enter the label names for each INPUT one at a time when prompted.\nEach label is limited to %d characters.\nNOTE: Please make sure that the input pin labels entered here match the input pin labels of the circuit - or the program WILL BREAK\n.",MAX_LABEL_LENGTH);
     char array_of_input_labels[Ninput][MAX_LABEL_LENGTH]; /* the size of the array is determined by how many inputs the user makes,
                                                              which makes it more memory efficient and easier to insert the user inputs*/
     
     for (int i = 0; i < Ninput; i++){
-        printf("Enter the label name for input number %d",i+1);
+        printf("Enter the label name for INPUT number %d:   ",i+1);
         fgets(array_of_input_labels, MAX_LABEL_LENGTH, stdin); // stores the input label name in the array of input labels
     }
 
-    // now outputs
+    // Second, create an array of outputs based on user input
 
-    // then make a table 
+    printf("\nFirstly, how many OUTPUTS are there from the circuit (not including internal pins between logic gates)?\nEnter a single number:    ");
+    int Noutput;
+    scanf("%d",&Noutput); // Scanf should suffice, because we just want a single integer
+
+    printf("\nPlease enter the label names for each OUTPUT one at a time when prompted.\nEach label is limited to %d characters.\nNOTE: Please make sure that the input pin labels entered here match the input pin labels of the circuit - or the program WILL BREAK\n.",MAX_LABEL_LENGTH);
+    char array_of_output_labels[Noutput][MAX_LABEL_LENGTH]; /* the size of the array is determined by how many inputs the user makes,
+                                                            which makes it more memory efficient and easier to insert the user inputs*/
+    
+    for (int j = 0; j < Noutput; j++){
+        printf("Enter the label name for OUTPUT number %d:  ",j+1);
+        fgets(array_of_output_labels, MAX_LABEL_LENGTH, stdin); // stores the input label name in the array of input labels
+    }
+
+    // Now, we need to create all the possible input combinations
+    
+    int number_of_input_combinations = pow(2, Ninput); // 2 to the power of the Number of inputs
+
+    /*
+    Will use number_of_input_combinations, to create an array of all the possible input combinations. 
+    And for each input combination, will ask the user what the output values should be - and make an array of expected outputs.
+    When it comes to running the circuit, the outputs will be created.
+    So when the test script is run
+    - the outputs corresponding to the labels for the outputs will be read off into an array of actual outputs and compared.
+    For the Generate Truth Table function, the only difference is that
+    the actual outputs are printed next to the other inputs like - but not actually - a test script.
+    */
+
+    int array_of_input_combos[number_of_input_combinations][Ninput]; // This array will contain each combination of inputs as a row, and each inputs value as a column
+
+    /*
+    need to begin with row 1, everything is zero. Then increment the last value in the row.
+    Then, if that last value is one on prev row, increment the value before it and set it to 1
+    - continues till all values are 1.
+    */
+
+    // Setting all values in row 1 (the 1st combination of inputs) to zero
+    for (int z = 0; z < Ninput; z++){  
+            array_of_input_combos[0][z] = 0; 
+        }
+
+    // Now, incrementing the values of the inputs for each row, starting from the LSB working backwards:
+    for (int k = 1; k < number_of_input_combinations; k++){ // For each row of inputs
+        for (int l = 0; l < Ninput; l++){ // For each input in a row
+            array_of_input_combos[k][l] = array_of_input_combos[k-1][l]; // Set each row to the previous row, ready for incremening
+        }
+        // Firstly, we need to check the LSB
+        if (array_of_input_combos[k][Ninput-1] == 0){ // if the LSB is zero
+            array_of_input_combos[k][Ninput-1] = 1; // Then increment the LSB - which will not overflow to the next bit
+        }
+        else if (array_of_input_combos[k][Ninput-1] == 1 && Ninput >= 2){ /* if the LSB is one and there are at least 2 inputs 
+            (need to check for this, because if just a buffer has been placed, there will only be 1 input
+            and thus we've already exhausted the combinations) */
+
+            // In this case we'll have set the LSB to zero and increment the next-lowest value bit - and so on...
+
+            // So, to check each value in the row and increment accordingly, we need to use a new for loop for this
+
+            for (int l = 2; l < Ninput; l++){ // starting from the next-lowest-bit as a reference point 
+
+
+                // DOESN'T WORK - NEED TO ADJUST --- IT'D JUST SET THE HSB TO 1 EVERY TIME - need to adjust it to do the process once
+                // maybe check if the current bit is one, and that this isn't the HSB, then increment the previous bit.
+                // but the problem is that it keeps incrementing all the bits - just need to do it once per cycle.
+            
+
+                if (array_of_input_combos[k][Ninput-l+1] == 1){ // If the bit lower than the current bit is one:
+                    array_of_input_combos[k][Ninput-l] = 1;     //    then set the current bit to 1...
+                    array_of_input_combos[k][Ninput-l+1] = 0;   //    ...and set the bit lower than the current bit to zero.
+                }
+            }
+        }
+        
+    }
+    
 
     // by printing arrays of the inputs and get users to write outputs.   :)
     
@@ -384,7 +460,19 @@ void run_circuit(void){
          Still need to find a way to input the inputs using a test script format.
         --------------------
         */
+
+        /* 
+        Will create an array of input values corresponding to the array of input labels - for the test script/truth table.
+        Will loop through the array of input labels and see if they match any of the pin labels from the array_of_io_labels.
+        If they do, then the value given to the input value for that input is copied to the array of io values for use in running the circuit.
+
+        For reading the output values, the reverse process is applied. The array of outputs will be used to loop through the array of io labels,
+        and where the two match, the value from the array of io values will be copied to a new output values array.
+        From which they can be printed in a truth table, compared with values in a test script or whatever.
         
+        But the output values can be read in a different function. 
+
+        */
         
         if (array_of_io_labels[i][0] != "destroyed" && array_of_io_labels[i][3] == "unassigned"){
             /* only do the following if a pin has not been destroyed and is not a pure input.
@@ -486,8 +574,7 @@ void menu_item_4(void) {
     printf("\n>> Menu 4: Run Test Script\n");
 
     /*
-    Firstly, need to check if a circuit has been made.
-    Need to load a test script as a text file.
+    Firstly, need to check if a circuit has been made using the make test script functio - need to pass it as a parameter or another global array.
     Then convert to array? Or run the make test script or generate truth table of the circuit and see if it matches. If not, for that row print the actual value, error and the value it should be
     */
 

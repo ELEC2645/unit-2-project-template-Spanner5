@@ -11,7 +11,6 @@ void menu_item_1(void) {
     4th, asks if want to display another gate. If not, returns to menu.
     */
 
-
     // Selecting which gate the user wants info for
 
     printf("\nSelect which gate to display information for (enter a number)\n"); // getting user input
@@ -22,32 +21,30 @@ void menu_item_1(void) {
     struct Gate *p = &NAND; // initialising a pointer for a gate, setting it to NAND by default
     select_gate(p, display_choice); // calls a function which points the pointer towards the correct gate
 
+    // Firstly, let's display the ASCII logic gate diagram for the chosen gate:
+    display_gate(p);
 
-
-    // CODE HERE TO DISPLAY THE DIAGRAM STORED IN THE STRUCT
-
-
-
-
-
-    printf("Name of Gate: %c",p->name);
-    printf("Number of NANDs used to make the gate: %d",p->n_nands);
-    printf("Number of inputs: %d",p->n_inputs);
-    printf("Number of outputs: %d",p->n_outputs);
-    printf("Boolean_representation: %c",p->Boolean_representation);
+    // Now to display the rest of the gate information
+    printf("\nName of Gate: %s",p->name);
+    printf("\nNumber of NANDs used to make the gate: %d",p->n_nands);
+    printf("\nNumber of inputs: %d",p->n_inputs);
+    printf("\nNumber of outputs: %d",p->n_outputs);
+    printf("\nInputs: %s",p->input_names);
+    printf("\nOutputs: %s",p->output_names);
+    printf("\nBoolean_representation: %s\n",p->Boolean_representation);
    
-    printf("Would you like to display information for another gate?\n(Enter 1 for yes, 0 for no)    ");
+    printf("Would you like to display information for another gate?\n(Enter 1 for yes, 0 for no):    ");
     important_constants two_options = BINARY_CHOICE;
     int yes_no = get_user_input(two_options);
     if (yes_no == 1){
         menu_item_1();
     } else {
-        printf("Returning to Main Menu");
+        printf("\nReturning to Main Menu\n");
         main_menu();
     }
 }
 
-void print_gates(void){
+void print_gate_options(void){
     printf("\n"
            "\t\t\t\t\t\t\n"
            "\t1. NAND\t\t\n"
@@ -59,6 +56,51 @@ void print_gates(void){
            "\t7. Mux\t\t\n"
            "\t8. Demux\t\t\n"
            "\t\t\t\t\t\t\n");
+}
+
+//void display_gate(struct Gate *p,char input_labels,char output_labels){
+void display_gate(struct Gate *p){
+
+    // First line of diagram
+    if (p->name == "Mux" || p->name == "Demux"){
+        printf("Select %s",p->diagram[0]);
+    }
+
+    // Second line of diagram
+    printf("  %s",p->diagram[1]);
+
+    // Third line of diagram
+    if (p->name == "Demux"){
+        printf("  %sY1", p->diagram[2]);
+    }
+    else if (p->name == "NOT" || p->name == "Buffer"){
+        printf("  %s",p->diagram[2]);
+    }
+    else{
+        printf("A %s", p->diagram[2]);
+    }
+
+    // Fourth line of diagram
+    if (p->name == "Demux"){
+        printf("A %s", p->diagram[3]);
+    }
+    else if (p->name == "NOT" || p->name == "Buffer"){
+        printf("A %sY", p->diagram[3]);
+    }
+    else{
+        printf("  %sY",p->diagram[3]);
+    }
+
+    // Fifth line of diagram
+    if (p->name == "Demux"){
+        printf(" %sY2", p->diagram[4]);
+    }
+    else if (p->name == "NOT" || p->name == "Buffer"){
+        printf("\t %s",p->diagram[4]);
+    }
+    else{
+        printf("B %s", p->diagram[4]);
+    }
 }
 
 void select_gate(struct Gate *p, int display_choice) // // A function which points the pointer towards the correct gate - depending on the entered number, enabling gate selection
@@ -109,7 +151,6 @@ void menu_item_2(void) {
     After a gate, choose to add more gates. Return to menu. Run test script. Test individual output.
     */
 
-
     /*
     Idea: make one function that can do all the possible gate functions,
     but the action it does depends on which gate is selected.
@@ -134,11 +175,6 @@ void menu_item_2(void) {
     Also, if a label is at the end of the chain (no pointers use its value) then it should be marked as a output variable.
     */
    
-
-
-
-
-
     /*
    
     First, ask for which gate they'd like to add to circuit.
@@ -192,24 +228,19 @@ void menu_item_2(void) {
     printf("Select a logic gate to add to the circuit.");
 
     // Code to select and display chosen logic gate:
-        print_gates();  // displaying the gate options
+        print_gate_options();  // displaying the gate options
         important_constants number_of_possible_inputs = GATE_OPTIONS;
         int gate_choice = get_user_input(number_of_possible_inputs); // retreiving and validating the input - a number corresponding to the correct gate
         struct Gate *p = &NAND; // initialising a pointer for a gate, setting it to NAND by default
         select_gate(p, gate_choice); // calls a function which points the pointer towards the correct gate
 
-
-
-        // NOW CALL FUNCTION FOR DISPLAYING THE GATE --- use "Input 1", etc to represent that the labels have not been assigned yet
-        // for a mux or demux, the final input will always be the select bit
-
-
-
-
+        // NOW TO DISPLAY THE GATE
+        display_gate(p);
+        
     // Now, code to ask the user to create labels for the gate
 
         int x; // establishing an incrementer for a while loop
-        int first_output_index; // establishing a variable that will hold the indedx of the first output
+        int first_output_index; // establishing a variable that will hold the index of the first output
 
         char input_names[p->n_inputs]; // creating 2 empty arrays for storing the input and output labels for this specific gate,
         char output_names[p->n_outputs]; // The size of the array has been set to the number of inputs and outputs for the selected gate.
@@ -736,7 +767,7 @@ int create_circuit_file() {
     return 0;
 }
 
-int write_to_circuit_file(custom_gate) {
+int write_to_circuit_file(char custom_gate) {
    
     // File pointer
     FILE* fptr;
@@ -778,7 +809,7 @@ int create_test_script_file() {
     return 0;
 }
 
-int write_to_test_script_file(text) {
+int write_to_test_script_file(char text) {
    
     // File pointer
     FILE* fptr;

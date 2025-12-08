@@ -30,12 +30,12 @@ int does_circuit_exist = 0; // defining this variable to be updated and used to 
 
 struct Gate{
     char name[10];
-    int diagram; // just a placeholder for calling the function for diagram
+    char diagram[5][50];
     int n_nands;
     int n_inputs;
     int n_outputs;
-    char input_names[5];
-    char output_names[5];
+    char input_names[3][6];
+    char output_names[2][2];
     char Boolean_representation[20]; // 20 characters long to allow for longer formulae or descriptions
 
 
@@ -57,7 +57,12 @@ struct Gate{
 
 struct Gate NAND = {
     .name = "NAND",
-    .diagram = 0,//"Need to load the diagram or print it using ASCII",
+    .diagram = 
+"\n",
+"   	  _______",
+"--------|       \\",
+"        | NAND   ))-(O)-----",
+"--------|_______//\n",
     .n_nands = 4,
     .n_inputs = 2,
     .n_outputs = 1,
@@ -67,7 +72,12 @@ struct Gate NAND = {
 
 struct Gate NOT = {
     .name = "NOT",
-    .diagram = 0,//"Need to load the diagram or print it using ASCII",
+    .diagram = 
+"\n",
+"   	  ___",
+"        |   \\",
+"--------|NOT >>>-(O)--------",
+"        |___//\n",
     .n_nands = 1,
     .n_inputs = 1,
     .n_outputs = 1,
@@ -77,7 +87,12 @@ struct Gate NOT = {
 
 struct Gate AND = {
     .name = "AND",
-    .diagram = 0,//"Need to load the diagram or print it using ASCII",
+    .diagram = 
+"\n",
+ "  	   _______",
+ "--------|       \\",
+ "        | AND    ))---------",
+ "--------|_______//\n",
     .n_nands = 2,
     .n_inputs = 2,
     .n_outputs = 1,
@@ -87,7 +102,12 @@ struct Gate AND = {
 
 struct Gate OR = {
     .name = "OR",
-    .diagram = 0,//"Need to load the diagram or print it using ASCII",
+    .diagram = 
+"\n",
+" 	        ______",
+" --------\\      \\   ",
+"           )  OR  >>---------",
+" --------//______//\n",
     .n_nands = 3,
     .n_inputs = 2,
     .n_outputs = 1,
@@ -97,7 +117,12 @@ struct Gate OR = {
 
 struct Gate XOR = {
     .name = "XOR",
-    .diagram = 0,//"Need to load the diagram or print it using ASCII",
+    .diagram = 
+"\n",
+" 	        ______",
+" -----)--\\      \\",
+"       }   ) XOR  >>---------",
+" -----)--//______//\n",
     .n_nands = 4,
     .n_inputs = 2,
     .n_outputs = 1,
@@ -107,7 +132,12 @@ struct Gate XOR = {
 
 struct Gate Buffer = {
     .name = "Buffer",
-    .diagram = 0,//"Need to load the diagram or print it using ASCII",
+    .diagram =
+"\n",
+"	       ___",
+"         |   \\",
+" --------|BUF >>>------------",
+"         |___//\n",
     .n_nands = 0,
     .n_inputs = 1,
     .n_outputs = 1,
@@ -117,7 +147,13 @@ struct Gate Buffer = {
 
 struct Gate Mux = {
     .name = "Mux",
-    .diagram = 0,//"Need to load the diagram or print it using ASCII",
+    .diagram =
+" ---¬",
+"	       _L__",
+" --------|    \\",
+"         | MUX  ]------------",
+" --------|____//\n",
+
     .n_nands = 4,
     .n_inputs = 3,
     .n_outputs = 1,
@@ -127,7 +163,12 @@ struct Gate Mux = {
 
 struct Gate Demux = {
     .name = "Demux",
-    .diagram = 0,//Need to load the diagram or print it using ASCII",
+    .diagram =
+" ----¬",
+"	        _L__",
+"         //    |-------------",
+" -------[ DMUX |",
+"         \\____|-------------\n",
     .n_nands = 5,
     .n_inputs = 2,
     .n_outputs = 2,
@@ -142,7 +183,8 @@ void menu_item_4(void);
 
 // MY INTERNAL FUNCTIONS for within the 6 menu options
 
-void print_gates(void);
+void print_gate_options(void);
+void display_gate(struct Gate *p);
 void select_gate(struct Gate *p, int display_choice);
 static void print_circuit_testing_menu(void);
 int create_circuit_file();

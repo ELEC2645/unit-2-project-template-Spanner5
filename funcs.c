@@ -21,8 +21,20 @@ void menu_item_1(void) {
     struct Gate *p = &NAND; // initialising a pointer for a gate, setting it to NAND by default
     select_gate(p, display_choice); // calls a function which points the pointer towards the correct gate
 
-    // Firstly, let's display the ASCII logic gate diagram for the chosen gate:
-    display_gate(p);
+    // Firstly, let's display the ASCII logic gate diagram for the chosen gate
+    // But to do that we need to determine the input labels for the gate:
+
+    char inputs[p->n_inputs]; 
+    char outputs[p->n_outputs];
+
+    for (int y = 0; y < p->n_inputs; y++){
+        inputs[y] = *p->input_names[y];
+    }
+    for (int z = 0; z < p->n_inputs; z++){
+        outputs[z] = *p->output_names[z];
+    }
+    
+    display_gate(p, inputs, outputs);
 
     // Now to display the rest of the gate information
     printf("\nName of Gate: %s",p->name);
@@ -58,12 +70,15 @@ void print_gate_options(void){
            "\t\t\t\t\t\t\n");
 }
 
-//void display_gate(struct Gate *p,char input_labels,char output_labels){
-void display_gate(struct Gate *p){
+void display_gate(struct Gate *p, char input_labels, char output_labels){
+//void display_gate(struct Gate *p){
 
     // First line of diagram
-    if (p->name == "Mux" || p->name == "Demux"){
-        printf("Select %s",p->diagram[0]);
+    if (p->name == "Mux"){
+        printf("%s %s", input_labels[2], p->diagram[0]); // maybe use structs to fix this??? Pass the array to a new struct then pass struct? Or make struct global?
+    }
+    else if(p->name == "Demux"){
+        printf("%s %s",input_labels[1], p->diagram[0]);
     }
 
     // Second line of diagram
@@ -235,15 +250,17 @@ void menu_item_2(void) {
         select_gate(p, gate_choice); // calls a function which points the pointer towards the correct gate
 
         // NOW TO DISPLAY THE GATE
-        display_gate(p);
+        char inputs = *p->input_names;
+        char outputs = *p->output_names;
+        display_gate(p, inputs, outputs);
         
     // Now, code to ask the user to create labels for the gate
 
         int x; // establishing an incrementer for a while loop
         int first_output_index; // establishing a variable that will hold the index of the first output
 
-        char input_names[p->n_inputs]; // creating 2 empty arrays for storing the input and output labels for this specific gate,
-        char output_names[p->n_outputs]; // The size of the array has been set to the number of inputs and outputs for the selected gate.
+        char names_of_inputs[p->n_inputs]; // creating 2 empty arrays for storing the input and output labels for this specific gate,
+        char names_of_outputs[p->n_outputs]; // The size of the array has been set to the number of inputs and outputs for the selected gate.
         //printf("");
 
         // 1st, priming the new output pins and finding an available slot for their index in the label list (so that we can store the labels for them)
@@ -275,7 +292,7 @@ void menu_item_2(void) {
             char inputlabel[MAX_LABEL_LENGTH] = {}; //limit of 15 characters
             fgets(inputlabel, sizeof(inputlabel), stdin); // got the label name for input
 
-            input_names[j] = inputlabel; // storing the input labels in the array to use for displaying the gate with labels filled in
+            names_of_inputs[j] = inputlabel; // storing the input labels in the array to use for displaying the gate with labels filled in
 
             // Now to assign the input pin label name to a label in the io_label array
             // Need to search through the array for the first slot where there is no pin label already filled
@@ -323,7 +340,7 @@ void menu_item_2(void) {
                                                                         their connections are external and thus a "TRUE" output from the circuit  */
             strcpy(array_of_io_labels[first_output_index + l][0], outputlabel); // naming the output gate using the user input
 
-            output_names[l] = outputlabel; // storing the output labels in the array to use for displaying the gate with labels filled in
+            names_of_outputs[l] = outputlabel; // storing the output labels in the array to use for displaying the gate with labels filled in
 
             // checking if an output variable has ALREADY been used as an input (in the case of feedback)
             x = 0;
@@ -339,13 +356,24 @@ void menu_item_2(void) {
             } // Feedback probably isn't possible with this version of the code, but that's not a main part of it,
               // there aren't currently clock cycles anyway.
         }
-   
-        // NOW CALL FUNCTION FOR DISPLAYING THE GATE
+        
+        /*char inputs[p->n_inputs]; 
+        char outputs[p->n_outputs];
 
-       
+        for (int y = 0; y < p->n_inputs; y++){
+            inputs[y] = names_of_inputs[y];
+        }
+        for (int z = 0; z < p->n_inputs; z++){
+            outputs[z] = names_of_outputs[z];
+        }*/
+        
+        // Now, let's display the ASCII logic gate diagram for the chosen gate
+        display_gate(p, names_of_inputs, names_of_outputs);   
 
         // Will ALSO NEED A FUNCTION FOR MAKING, SAVING AND DISPLAYING THE CIRCUIT TEXT FILE after EACH GATE
         
+
+
 
 
 

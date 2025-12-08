@@ -144,7 +144,11 @@ void menu_item_4(void);
 
 void print_gates(void);
 void select_gate(struct Gate *p, int display_choice);
-int create_file(void);
+static void print_circuit_testing_menu(void);
+int create_circuit_file();
+int write_to_circuit_file(char custom_gate);
+int create_test_script_file();
+int write_to_test_script_file(char text);
 void run_circuit(void);
 
 #endif

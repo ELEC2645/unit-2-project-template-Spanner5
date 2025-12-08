@@ -346,12 +346,13 @@ void menu_item_3(void) {
         main_menu();
     }
 
+    /*
     // Now, ask the user if they'd like to make or run the test script or generate a truth table for the circuit
     printf("\nPlease select a function:\n\n");
     print_circuit_testing_menu();
     printf("\nEnter a number:   ");
     int option = get_user_input(CIRCUIT_TESTING_MENU_ITEMS);
-
+    */
 
 
 
@@ -416,6 +417,7 @@ void menu_item_3(void) {
 
     int array_of_input_combos[number_of_input_combinations][Ninput]; // This array will contain each combination of inputs as a row, and each inputs value as a column
     int array_of_expected_outputs[number_of_input_combinations][Noutput]; // Also, the array of expected outputs has as many rows as there are input combinations
+    int array_of_actual_outputs[number_of_input_combinations][Noutput]; // Additionally, the array of actual outputs will have the same dimensions as the array of expected outputs
 
     /*
     need to begin with row 1, everything is zero. Then increment the last value in the row.
@@ -463,9 +465,56 @@ void menu_item_3(void) {
     for (int n = 0; n < number_of_input_combinations; n++){
         printf("\n%s %s\n\n",array_of_input_combos[n], array_of_expected_outputs[n]);
     }
+    
     // NEED TO SEND THESE SOMEWHERE: return array_of_input_labels, array_of_output_labels, array_of_input_combos, array_of_expected_outputs;
+    printf("");
 
+    // Now, we'll use the test script to evaluate the circuit
 
+    // For each set of inputs, need to run the circuit, find the output values and store in new array
+    for (int o = 0; o < number_of_input_combinations; o++){
+
+        /*
+        First, we need to assign the values relating to the input pins (in the smaller array: input values array) to
+        the values relating to to the input pins in the larger: array of io values.
+        We'll need to use the array of io labels and the array of input labels to find the correct slots.
+        */
+        for (int p = 0; p < MAX_NUMBER_OF_IO_PINS; p++){ // looping through the larger array of all pin labels
+            for (int q = 0; q < Ninput; q++){ // looping through the smaller array of input pin values
+                if (array_of_input_labels[q] == array_of_io_labels[p][0]){ // If the input label in the SMALLER array matches the pin label in the LARGER array...
+                    array_of_io_values[p] = array_of_input_combos[q][0];   // ...then the value of that pin from the SMALLER array gets copied to the value of that pin in the LARGER array 
+                }          
+            }
+        }
+
+        // Now that the inputs to the circuit have been entered (for THIS combination of inputs), the circuit will be run to generate the outputs 
+        run_circuit();
+
+        /*
+        In order to get the actual outputs for each set of inputs, the reverse process is applied.
+        The larger array of io labels is looped through and compared with the labels of the output pins from a smaller array.
+        If they match, then the value of corresponding to the output pin is copied from a LARGE array of pin values to the SMALLER array of output pin values.
+        The array can then be printed with the rest of the test script and also compared with the array of predicted outputs to show where they differed.
+        */
+        for (int p = 0; p < MAX_NUMBER_OF_IO_PINS; p++){ // looping through the larger array of all pin labels
+            for (int q = 0; q < Noutput; q++){ // looping through the smaller array of output pin values
+                if (array_of_output_labels[q] == array_of_io_labels[p][0]){ // If the output label in the SMALL array matches the pin label in the LARGER array...
+                    array_of_actual_outputs[q][0] = array_of_io_values[p];   // ...then the value of that output pin from the LARGE array gets copied to the value of that pin in the SMALLER array 
+                }          
+            }
+        }
+    }
+    // Should save these results to a text file
+
+    
+    //printf("Would you like to save the test results?");
+    printf("\n\nFinal Test Script:\n%s Expected Ouptuts:%s\tActual Outputs:%s\n",array_of_input_labels,array_of_output_labels,array_of_output_labels);
+    for (int n = 0; n < number_of_input_combinations; n++){
+        printf("\n%s %s\t\t\t%s\n\n",array_of_input_combos[n], array_of_expected_outputs[n],array_of_actual_outputs[n]);
+    }
+    
+    
+    
 
 
 
@@ -670,9 +719,7 @@ void menu_item_4(void) {
 
     }
 
-
-
-int create_file() {
+int create_circuit_file() {
    
     // File pointer
     FILE* fptr;
@@ -689,7 +736,7 @@ int create_file() {
     return 0;
 }
 
-int write_to_file(custom_gate) {
+int write_to_circuit_file(custom_gate) {
    
     // File pointer
     FILE* fptr;
@@ -704,6 +751,48 @@ int write_to_file(custom_gate) {
     else{
         //printf("The file is now opened.\n"); - not going to use this line
         fputs(custom_gate, fptr);
+        fputs("\n", fptr);
+
+        // Closing the file using fclose()
+        fclose(fptr);
+        printf("Circuit has been updated\n");
+        // printf("The file is now closed."); - not going to use this line
+    }
+    return 0;
+}
+
+int create_test_script_file() {
+   
+    // File pointer
+    FILE* fptr;
+
+    // Creating file using fopen()
+    // with access mode "w"
+    fptr = fopen("Test Script.txt", "w");
+
+    // checking if the file is created
+    if (fptr == NULL)
+        printf("The file is not opened.");
+    else
+        printf("The file is created Successfully.");
+    return 0;
+}
+
+int write_to_test_script_file(text) {
+   
+    // File pointer
+    FILE* fptr;
+
+    // Creating file using fopen()
+    // with access mode "w"
+    fptr = fopen("Test Script.txt", "w");
+
+    // Checking if the file is created
+    if (fptr == NULL)
+        printf("The file is not opened.");
+    else{
+        //printf("The file is now opened.\n"); - not going to use this line
+        fputs(text, fptr);
         fputs("\n", fptr);
 
         // Closing the file using fclose()

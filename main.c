@@ -97,6 +97,20 @@ static int get_user_input(important_constants local_name_of_enum_value)
     return value;
 }
 
+static void print_main_menu(void)
+{
+    printf("\n----------- Main menu -----------\n");
+    printf("\n"
+           "\t\t\t\t\t\t\n"
+           "\t1. Logic Gate Information\t\t\n"
+           "\t2. Make Logic Circuit\t\t\n"
+           "\t3. Circuit Testing\t\t\n"
+           "\t4. Clear Circuit\t\t\t\t\n"
+           "\t5. Exit\t\t\t\t\n"
+           "\t\t\t\t\t\t\n");
+    printf("---------------------------------------------\n");
+}
+
 static void select_menu_item(int input)
 {
     switch (input) {
@@ -123,20 +137,6 @@ static void select_menu_item(int input)
             printf("Invalid Input. Exiting anyway. Bye!\n");
             exit(1);
     }
-}
-
-static void print_main_menu(void)
-{
-    printf("\n----------- Main menu -----------\n");
-    printf("\n"
-           "\t\t\t\t\t\t\n"
-           "\t1. Logic Gate Information\t\t\n"
-           "\t2. Make Logic Circuit\t\t\n"
-           "\t3. Circuit Testing\t\t\n"
-           "\t4. Clear Circuit\t\t\t\t\n"
-           "\t5. Exit\t\t\t\t\n"
-           "\t\t\t\t\t\t\n");
-    printf("---------------------------------------------\n");
 }
 
 static void go_back_to_main(void)

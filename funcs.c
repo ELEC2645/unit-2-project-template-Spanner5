@@ -1,5 +1,10 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <math.h>
 #include "funcs.h"
+
 
 void menu_item_1(void) {
     printf("\n>> Menu 1: Logic Gate Information\n");
@@ -14,7 +19,7 @@ void menu_item_1(void) {
     // Selecting which gate the user wants info for
 
     printf("\nSelect which gate to display information for (enter a number)\n"); // getting user input
-    print_gates();  // displaying the gate options
+    print_gate_options();  // displaying the gate options
     important_constants number_of_possible_inputs = GATE_OPTIONS;
     int display_choice = get_user_input(number_of_possible_inputs); // retreiving and validating the input
 
@@ -141,7 +146,7 @@ void display_gate(struct Gate *p, char* input_labels, char* output_labels, int c
     then the gate's image should be saved to a text file as a record of the circuit.
     */
     if (create_file){
-        char gate_data = {"\n\n\n",a,b,c,d,e,"\n\n\n"}; // collate all the lines of the diagram together
+        char gate_data[7] = {"\n\n\n",a,b,c,d,e,"\n\n\n"}; // collate all the lines of the diagram together
         write_to_circuit_file(gate_data); // write the diagram to the text file
     }
 
@@ -283,7 +288,7 @@ void menu_item_2(void) {
         // NOW TO DISPLAY THE GATE
         char inputs = *p->input_names;
         char outputs = *p->output_names;
-        display_gate(p, inputs, outputs,0);
+        display_gate(p, &inputs, &outputs,0);
         
     // Now, code to ask the user to create labels for the gate
 
@@ -551,7 +556,6 @@ void menu_item_3(void) {
     }
     
     // NEED TO SEND THESE SOMEWHERE: return array_of_input_labels, array_of_output_labels, array_of_input_combos, array_of_expected_outputs;
-    printf("");
 
     // Now, we'll use the test script to evaluate the circuit
 

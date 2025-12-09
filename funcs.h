@@ -179,7 +179,7 @@ void menu_item_2(void);
 void menu_item_3(void);
 void menu_item_4(void);
 
-// MY INTERNAL FUNCTIONS for within the 6 menu options
+// MY INTERNAL FUNCTIONS for within the main menu options
 
 void print_gate_options(void);
 void display_gate(struct Gate *p,char* input_labels,char* output_labels,int create_file);
@@ -191,31 +191,8 @@ int create_test_script_file();
 int write_to_test_script_file(char text);
 void run_circuit(void);
 
+// FUNCTIONS DEFINED IN main.c :
+
+
+
 #endif
-
-/*
-
-Example enum use:
-
-typedef enum { A =1, MENU_ITEMS = 6,  } menu_items ;   // - defining an enum globally for use in input validation
-
-static void main_menu(void)
-{
-    print_main_menu();
-
-    menu_items cur_items = MENU_ITEMS;
-    cur_items = A;
-    int input = get_user_input(cur_items);
-    select_menu_item(input);
-}
-
-static int get_user_input(menu_items local_name)
-{
-
-    local_name = A;
-
-
-    rest of function
-}
-   
-*/

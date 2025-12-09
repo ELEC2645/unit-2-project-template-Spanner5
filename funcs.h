@@ -182,7 +182,7 @@ void menu_item_4(void);
 // MY INTERNAL FUNCTIONS for within the 6 menu options
 
 void print_gate_options(void);
-void display_gate(struct Gate *p,char input_labels,char output_labels,int create_file);
+void display_gate(struct Gate *p,char* input_labels,char* output_labels,int create_file);
 void select_gate(struct Gate *p, int display_choice);
 static void print_circuit_testing_menu(void);
 int create_circuit_file();

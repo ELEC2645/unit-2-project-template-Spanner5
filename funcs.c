@@ -401,12 +401,6 @@ void menu_item_2(void) {
         // Now, let's display the ASCII logic gate diagram for the chosen gate and save it to the text file
         int create_file = 1;
         display_gate(p, names_of_inputs, names_of_outputs, create_file);   
-        // Will ALSO NEED A FUNCTION FOR MAKING, SAVING AND DISPLAYING THE CIRCUIT TEXT FILE after EACH GATE
-        
-
-
-
-
 
         does_circuit_exist = 1; /* This updates the status and allows for functions to run the circuit
                                 - provided no other factors are  unsatisfied */
@@ -595,14 +589,25 @@ void menu_item_3(void) {
         }
     }
     
-    char results[number_of_input_combinations +1]; // Initialising an array to store the results in
+    char results[number_of_input_combinations +1]; // Initialising an array to store the results inside of
    
-    // Printing the results of the test & storing them in the results array
-    results[0] = "\n\nFinal Test Script:\n%s Expected Ouptuts:%s\tActual Outputs:%s\n",array_of_input_labels,array_of_output_labels,array_of_output_labels;
-    printf(results[0]);
+    // Now to print the results of the test & storing them in the results array
+    results[0] = "\n\nFinal Test Script:\n%s Expected Ouptuts:%s\tActual Outputs:%s\n",array_of_input_labels,array_of_output_labels,array_of_output_labels; // storing the variables names in the results array
+    printf(results[0]); // Printing the variable names at the top of the results table
+
+    int number_of_discrepancies = 0;
+
     for (int n = 0; n < number_of_input_combinations; n++){
-        results[n+1] = "\n%s %s\t\t\t%s\t\t",array_of_input_combos[n], array_of_expected_outputs[n],array_of_actual_outputs[n];
-        printf(results[n+1]);
+        results[n+1] = "\n%s %s\t\t\t%s\t\t",array_of_input_combos[n], array_of_expected_outputs[n],array_of_actual_outputs[n]; // storing a line of results in the array
+        printf(results[n+1]); // printing the results from the array
+
+        // Additionally, we can compare the number of discrepancies between expected and actual outputs
+        for (int v = 0; v < Noutput; v++){
+            if (array_of_expected_outputs[n][v] != array_of_actual_outputs[n][v]){ // if epected output is not equal to actual output
+                number_of_discrepancies++;
+                printf("\nThe ACTUAL output in row %d down & column %d across is not equal to the expected output.\n",n+1,v+1); // using +1 because of the indexing starting at zero
+            }
+        }
     }
     
     // Now to ask the user if they'd like to save these results to a text file
@@ -612,14 +617,6 @@ void menu_item_3(void) {
         create_test_script_file();
         write_to_test_script_file(results);
     }
-    
-
-
-
-
-
-
-
 }
 
 static void print_circuit_testing_menu(void)

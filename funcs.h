@@ -53,7 +53,20 @@ struct Gate{
      */
 };
 
-
+struct Gate AND = {
+    .name = "AND",
+    .diagram = 
+"\n",
+ "  	   _______",
+ "--------|       \\",
+ "        | AND    ))---------",
+ "--------|_______//\n",
+    .n_nands = 2,
+    .n_inputs = 2,
+    .n_outputs = 1,
+    .input_names = "A","B",
+    .output_names = "Y",
+    .Boolean_representation = "Y = A.B"};
 
 struct Gate NAND = {
     .name = "NAND",
@@ -85,20 +98,20 @@ struct Gate NOT = {
     .output_names = "Y",
     .Boolean_representation = "Y = A'"};
 
-struct Gate AND = {
-    .name = "AND",
-    .diagram = 
+struct Gate Buffer = {
+    .name = "Buffer",
+    .diagram =
 "\n",
- "  	   _______",
- "--------|       \\",
- "        | AND    ))---------",
- "--------|_______//\n",
-    .n_nands = 2,
-    .n_inputs = 2,
+"	       ___",
+"         |   \\",
+" --------|BUF >>>------------",
+"         |___//\n",
+    .n_nands = 0,
+    .n_inputs = 1,
     .n_outputs = 1,
-    .input_names = "A","B",
+    .input_names = "A",
     .output_names = "Y",
-    .Boolean_representation = "Y = A.B"};
+    .Boolean_representation = "Y = A"};
 
 struct Gate OR = {
     .name = "OR",
@@ -129,21 +142,6 @@ struct Gate XOR = {
     .input_names = "A","B",
     .output_names = "Y",
     .Boolean_representation = "Y = A⊕B"};
-
-struct Gate Buffer = {
-    .name = "Buffer",
-    .diagram =
-"\n",
-"	       ___",
-"         |   \\",
-" --------|BUF >>>------------",
-"         |___//\n",
-    .n_nands = 0,
-    .n_inputs = 1,
-    .n_outputs = 1,
-    .input_names = "A",
-    .output_names = "Y",
-    .Boolean_representation = "Y = A"};
 
 struct Gate Mux = {
     .name = "Mux",
@@ -184,7 +182,7 @@ void menu_item_4(void);
 // MY INTERNAL FUNCTIONS for within the 6 menu options
 
 void print_gate_options(void);
-void display_gate(struct Gate *p,char input_labels,char output_labels);
+void display_gate(struct Gate *p,char input_labels,char output_labels,int create_file);
 void select_gate(struct Gate *p, int display_choice);
 static void print_circuit_testing_menu(void);
 int create_circuit_file();

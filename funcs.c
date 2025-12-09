@@ -34,7 +34,7 @@ void menu_item_1(void) {
         outputs[z] = *p->output_names[z];
     }
     
-    display_gate(p, inputs, outputs);
+    display_gate(p, inputs, outputs,0);
 
     // Now to display the rest of the gate information
     printf("\nName of Gate: %s",p->name);
@@ -70,52 +70,81 @@ void print_gate_options(void){
            "\t\t\t\t\t\t\n");
 }
 
-void display_gate(struct Gate *p, char input_labels, char output_labels){
+void display_gate(struct Gate *p, char* input_labels, char* output_labels, int create_file){
 //void display_gate(struct Gate *p){
 
-    // First line of diagram
+    char a; // initialising some arrays to store the lines of the logic gate diagrams in
+    char b;
+    char c;
+    char d;
+    char e;
+
+    /*
+    The logic gates have different diagrams and thus need to be displayed differently
+    (for the purposes of handling/displaying the input and output pins.)
+    */
+
+    // Creating the first line of diagram
     if (p->name == "Mux"){
-        printf("%s %s", input_labels[2], p->diagram[0]); // maybe use structs to fix this??? Pass the array to a new struct then pass struct? Or make struct global?
+        a = "\n%s %s", input_labels[2], p->diagram[0];  
     }
     else if(p->name == "Demux"){
-        printf("%s %s",input_labels[1], p->diagram[0]);
-    }
-
-    // Second line of diagram
-    printf("  %s",p->diagram[1]);
-
-    // Third line of diagram
-    if (p->name == "Demux"){
-        printf("  %sY1", p->diagram[2]);
-    }
-    else if (p->name == "NOT" || p->name == "Buffer"){
-        printf("  %s",p->diagram[2]);
+        a = "\n%s %s",input_labels[1], p->diagram[0];
     }
     else{
-        printf("A %s", p->diagram[2]);
+        a = " "; // the first line is redundant for non-muxes
     }
+    printf("%s",a);
 
-    // Fourth line of diagram
+    // Creating the second line of diagram
+    b = "\n/t %s",p->diagram[1];
+    printf("%s",b);
+
+    // Creating the third line of diagram
     if (p->name == "Demux"){
-        printf("A %s", p->diagram[3]);
+        c = "\n\t %s%s", p->diagram[2], output_labels[0];
     }
     else if (p->name == "NOT" || p->name == "Buffer"){
-        printf("A %sY", p->diagram[3]);
+        c = "\n\t %s",p->diagram[2];
     }
     else{
-        printf("  %sY",p->diagram[3]);
+        c = "\n%s %s", input_labels[0], p->diagram[2];
     }
+    printf("%s",c);
 
-    // Fifth line of diagram
+    // Creating the fourth line of diagram
     if (p->name == "Demux"){
-        printf(" %sY2", p->diagram[4]);
+        d = "\n%s %s", input_labels[0], p->diagram[3];
     }
     else if (p->name == "NOT" || p->name == "Buffer"){
-        printf("\t %s",p->diagram[4]);
+        d = "\n%s %s %s", input_labels[0], p->diagram[3], output_labels[0];
     }
     else{
-        printf("B %s", p->diagram[4]);
+        d = "\n\t %s%s",p->diagram[3], output_labels[0];
     }
+    printf("%s",d);
+
+    // Creating the fifth line of diagram
+    if (p->name == "Demux"){
+        e = " \n%s %s", p->diagram[4], output_labels[1];
+    }
+    else if (p->name == "NOT" || p->name == "Buffer"){
+        e = "\n\t %s",p->diagram[4];
+    }
+    else{
+        e = "\n%s %s", input_labels[1], p->diagram[4];
+    }
+    printf("%s",e);
+
+    /*
+    Now, if the gate is the once customized by the user (rather than a reference image)
+    then the gate's image should be saved to a text file as a record of the circuit.
+    */
+    if (create_file){
+        char gate_data = {"\n\n\n",a,b,c,d,e,"\n\n\n"}; // collate all the lines of the diagram together
+        write_to_circuit_file(gate_data); // write the diagram to the text file
+    }
+
 }
 
 void select_gate(struct Gate *p, int display_choice) // // A function which points the pointer towards the correct gate - depending on the entered number, enabling gate selection
@@ -240,6 +269,8 @@ void menu_item_2(void) {
 
     */
 
+    create_circuit_file(); // creating the text file for the gate
+
     printf("Select a logic gate to add to the circuit.");
 
     // Code to select and display chosen logic gate:
@@ -252,7 +283,7 @@ void menu_item_2(void) {
         // NOW TO DISPLAY THE GATE
         char inputs = *p->input_names;
         char outputs = *p->output_names;
-        display_gate(p, inputs, outputs);
+        display_gate(p, inputs, outputs,0);
         
     // Now, code to ask the user to create labels for the gate
 
@@ -287,7 +318,7 @@ void menu_item_2(void) {
 
         // 2nd, managing the input pins
         for (int j = 0;j< p->n_inputs;j++){
-            printf("\nPlease provide a label/name for an INPUT pin %d the gate. (Each label is limited to %d characters):     ",j,MAX_LABEL_LENGTH); // Note: if referencing the same pin twice (e.g for an output used as an input),
+            printf("\nPlease provide a label/name for INPUT pin %s of the gate. (Each label is limited to %d characters):     ", p->input_names[j], MAX_LABEL_LENGTH); // Note: if referencing the same pin twice (e.g for an output used as an input),
                                                                                     // then need to match the name character for character - or at least .upper()
             char inputlabel[MAX_LABEL_LENGTH] = {}; //limit of 15 characters
             fgets(inputlabel, sizeof(inputlabel), stdin); // got the label name for input
@@ -329,7 +360,7 @@ void menu_item_2(void) {
 
         // 4th managing the output pins fully
         for (int l = 0; l< p->n_outputs; l++){ // for each of the outputs...
-            printf("\nPlease provide a label/name for an INPUT pin %d the gate. (Each label is limited to %d characters):     ",l,MAX_LABEL_LENGTH);
+            printf("\nPlease provide a label/name for INPUT pin %s of the gate. (Each label is limited to %d characters):     ", p->output_names[l], MAX_LABEL_LENGTH);
             // Note: if referencing the same pin twice (e.g for an output used as an input),
             // then need to match the name character for character - or at least .upper()
 
@@ -367,9 +398,9 @@ void menu_item_2(void) {
             outputs[z] = names_of_outputs[z];
         }*/
         
-        // Now, let's display the ASCII logic gate diagram for the chosen gate
-        display_gate(p, names_of_inputs, names_of_outputs);   
-
+        // Now, let's display the ASCII logic gate diagram for the chosen gate and save it to the text file
+        int create_file = 1;
+        display_gate(p, names_of_inputs, names_of_outputs, create_file);   
         // Will ALSO NEED A FUNCTION FOR MAKING, SAVING AND DISPLAYING THE CIRCUIT TEXT FILE after EACH GATE
         
 
@@ -563,16 +594,24 @@ void menu_item_3(void) {
             }
         }
     }
-    // Should save these results to a text file
-
     
-    //printf("Would you like to save the test results?");
-    printf("\n\nFinal Test Script:\n%s Expected Ouptuts:%s\tActual Outputs:%s\n",array_of_input_labels,array_of_output_labels,array_of_output_labels);
+    char results[number_of_input_combinations +1]; // Initialising an array to store the results in
+   
+    // Printing the results of the test & storing them in the results array
+    results[0] = "\n\nFinal Test Script:\n%s Expected Ouptuts:%s\tActual Outputs:%s\n",array_of_input_labels,array_of_output_labels,array_of_output_labels;
+    printf(results[0]);
     for (int n = 0; n < number_of_input_combinations; n++){
-        printf("\n%s %s\t\t\t%s\n\n",array_of_input_combos[n], array_of_expected_outputs[n],array_of_actual_outputs[n]);
+        results[n+1] = "\n%s %s\t\t\t%s\t\t",array_of_input_combos[n], array_of_expected_outputs[n],array_of_actual_outputs[n];
+        printf(results[n+1]);
     }
     
-    
+    // Now to ask the user if they'd like to save these results to a text file
+    printf("\nWould you like to save the test results?\nEnter 1 for yes, 0 for no:  ");
+    int save_results = get_user_input(BINARY_CHOICE);
+    if (save_results){
+        create_test_script_file();
+        write_to_test_script_file(results);
+    }
     
 
 

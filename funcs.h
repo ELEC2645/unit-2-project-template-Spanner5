@@ -2,7 +2,7 @@
 #define FUNCS_H
 
 
-typedef enum { BINARY_CHOICE = 2, MENU_ITEMS = 5, GATE_OPTIONS = 8, MAX_NUMBER_OF_IO_PINS = 100, NUMBER_OF_PIN_LABELS = 6, MAX_LABEL_LENGTH = 15, CIRCUIT_TESTING_MENU_ITEMS = 4 } important_constants ;   // - defining an enum globally for use in input validation
+typedef enum { BINARY_CHOICE = 2, MENU_ITEMS = 5, GATE_OPTIONS = 8, MAX_NUMBER_OF_IO_PINS = 100, NUMBER_OF_PIN_LABELS = 5, MAX_LABEL_LENGTH = 15, CIRCUIT_TESTING_MENU_ITEMS = 4 } important_constants ;   // - defining an enum globally for use in input validation
 
 // OR maybe make an array and then replace each with another array
 

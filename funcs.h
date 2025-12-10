@@ -4,26 +4,17 @@
 
 typedef enum { BINARY_CHOICE = 2, MENU_ITEMS = 5, GATE_OPTIONS = 8, MAX_NUMBER_OF_IO_PINS = 100, NUMBER_OF_PIN_LABELS = 5, MAX_LABEL_LENGTH = 15, CIRCUIT_TESTING_MENU_ITEMS = 4 } important_constants ;   // - defining an enum globally for use in input validation
 
-// OR maybe make an array and then replace each with another array
-
 char* array_of_io_labels[MAX_NUMBER_OF_IO_PINS][NUMBER_OF_PIN_LABELS][MAX_LABEL_LENGTH]; // making a character array where each term is an empty space for a label (of the variables used in the gates).
 //  limit of 15 characters per label name
 
 /* in the main program, each slot of the array of io labels gets rewritten to:
-Syntax: array_of_io_labels[i] = [pin_label, gate_type, internal_or_external_output?, input_1, input_2, input_3]
+Syntax: array_of_io_labels[i] = [pin_label, gate_type, input_1, input_2, input_3]
 */
 
 int* array_of_io_values[MAX_NUMBER_OF_IO_PINS];
 /*
 making an array of integer values which will change depending on the computations done to with pointers
 - the value in an array should match that of the labels - except in the cases where a label is marked equal to another
-
-Although the array contains pointers and values.
-The array values of inputs should b -1 and the array values of labels whicha re not input or outputs should be pointers,
-we need some way of determining outputs as well.
-Maybe attach a metadata for each value in THIS ARRAY which increments every time a pointer is used.
-(Attach it when returning the value, actually return an array [value, times used].)
-Then when the output variable(s) will have been used zero times.
 */
 
 int does_circuit_exist; // defining this variable to be updated and used to check whether a circuit exists and thus whether some functions can run
@@ -37,20 +28,6 @@ struct Gate{
     char input_names[3][6];
     char output_names[2][2];
     char Boolean_representation[20]; // 20 characters long to allow for longer formulae or descriptions
-
-
-     /* for inputs, could have an array of int variables, which get assigned a value,
-        but every time a user makes a gate, a new struct is made which is a clone of one of these
-        but with its int variables for inputs assigned a value - or letter OR array (up to a character limit).
-        The input is then stored in a global array. OR passed as a parameter between functions
-        OR written to a txt file and loaded from every time.
-
-        Whenever a user enters a label for an input or output,
-        the code looks through the list of all labels and assigns the new variable as equal to THAT VARIABLE ITSELF as a pointer
-        so that a change in the variable affects the output of the pointer. So that nested gates can work.
-        It changes the initial input but that doesn't matter. OR it just adds all the computations together manually
-        once all inputs are given - to create an output.
-     */
 };
 
 struct Gate AND = {
@@ -190,9 +167,5 @@ int write_to_circuit_file(char custom_gate);
 int create_test_script_file();
 int write_to_test_script_file(char text);
 void run_circuit(void);
-
-// FUNCTIONS DEFINED IN main.c :
-
-
 
 #endif

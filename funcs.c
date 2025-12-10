@@ -703,15 +703,52 @@ static void print_circuit_testing_menu(void) // Implement once menu 3 is fully f
 
 void run_circuit(void){
 
-    /* This function does:
+    /* This function:
     
-    
-    */
+    In short: uses the input pin values inputted from the test script
+              and uses the sub-array for each pin to decide the gate operation that should be done in order to produce
+              the correct output value to set as the value of the pin.
 
-    /*
-    Loop through the pin_label array until hit unassigned for the value.
-    For each pin label, use its corresponding index in the value array and set it equal to the operation
-    (decided by the gate label) of the values in the labels (addresses) of the input pins.
+
+    The function iterates through the array of io labels using index i, stopping when an unassigned pin name label is reached
+    (which is end of the pins the user has assigned).
+
+    If a given pin in the array of io labels has no input pins labels, it must be a "pure" input to the circuit
+    (i.e. it is not an output of any gate) and can therefore be ignored: any pure inputs to the circuit will have had their values 
+    inputted by the test script so we don't have to worry about them.
+
+    If a pin is marked as "destroyed" or its input pin labels are "unassigned",
+    then the following does not happen and the program continues to iterate until
+    it either finds an assigned pin or the end of the array is reached.
+
+    The current position in the array of io labels is the pin currently being focused on/selected: pin i.
+
+    Within the current while loop, the array of io labels is iterated through again using index j.
+    If the jth pin name label is equal to any of the input pin labels of pin i,
+    then the jth pin value corresponding to the jth pin name label
+    (due to the fact that array of io labels and array of io values share the same index)
+    is copied to the correct "input" variable below.
+
+    This gives us the inputs for the operation to calculate the value of pin i.
+
+    The operation itself is determined by the gate name label in the sub-arry of the array of io values for pin i.
+    Using an if-else ladder, the operation matching the gate name label is selected and carried out on the relevant 
+    "input" variables below. 
+
+    For the Demux, it's a bit more complicated because it has 2 outputs rather than one.
+
+    We have to first decide which of the 2 outputs this output is, Y0 or Y1.
+    This is done based on chacking the previous pin (pin i-1).
+    If pin i-1 has the EXACT same input labels and gate type, it must be from the same mux, so treat that output as being Y0.
+    So, the current output is Y1.
+    If pin i-1 has different details, then the current pin must be the first of the mux outputs. 
+    So, the current output is Y0.
+
+    Then of course there's the usual opreations for the demux. But with 4 possible outputs depending on whether
+    the current pin is Y0 or Y1 and what the value of the select bit is.
+
+    Then increment i to move to the next pin.
+    Repeat until no more assgined pins of the end of the array is reached.
     */
 
     int i = 0;
@@ -720,27 +757,8 @@ void run_circuit(void){
     int input_2;
     int input_3;
     while(i<MAX_NUMBER_OF_IO_PINS && array_of_io_labels[i][0] != "unassigned"){ // looking through all pins that have been used
-        
-        /*
-        --------------------
-         Still need to find a way to input the inputs using a test script format.
-        --------------------
-        */
 
-        /* 
-        Will create an array of input values corresponding to the array of input labels - for the test script/truth table.
-        Will loop through the array of input labels and see if they match any of the pin labels from the array_of_io_labels.
-        If they do, then the value given to the input value for that input is copied to the array of io values for use in running the circuit.
-
-        For reading the output values, the reverse process is applied. The array of outputs will be used to loop through the array of io labels,
-        and where the two match, the value from the array of io values will be copied to a new output values array.
-        From which they can be printed in a truth table, compared with values in a test script or whatever.
-        
-        But the output values can be read in a different function. 
-
-        */
-        
-        if (array_of_io_labels[i][0] != "destroyed" && array_of_io_labels[i][2] == "unassigned"){
+        if (array_of_io_labels[i][0] != "destroyed" && array_of_io_labels[i][2] != "unassigned"){
             /* only do the following if a pin has not been destroyed and is not a pure input.
             ("Pure input" means a pin is not created as an output of any gate, so the 1st input pin for the pin's labels must be unassigned) */
 

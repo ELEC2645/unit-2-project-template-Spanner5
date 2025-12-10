@@ -5,43 +5,47 @@
 #include <math.h>
 #include "funcs.h"
 
-
 void menu_item_1(void) {
     printf("\n>> Menu 1: Logic Gate Information\n");
 
-    /*
-    First, a sub-menu for options to select the gates:  (select which gate to display information for (enter a number))
-    2nd, for the user input number, validate it, etc - use existing functions to do that
-    3rd, display info for the coresponding gate (use structs and pointers to select and print the gate info) - want a picture for each gate and info
-    4th, asks if want to display another gate. If not, returns to menu.
+    /* This function does:
+
+    1st, prints a sub-menu for options to select the gates and asks the user to enter a number to pick one.
+    2nd, gets the user input number & validates it.
+    3rd, displays info for the coresponding gate (using structs and pointers to select and print the gate info).
+         Also an image of the chosen gate is displayed onscreen.
+    4th, asks the user if they want to display another gate's information. If not, returns to menu.
     */
 
     // Selecting which gate the user wants info for
 
-    printf("\nSelect which gate to display information for (enter a number)\n"); // getting user input
-    print_gate_options();  // displaying the gate options
-    important_constants number_of_possible_inputs = GATE_OPTIONS;
-    int display_choice = get_user_input(number_of_possible_inputs); // retreiving and validating the input
+    print_gate_options();  // Firstly, the gate options are displayed
+
+    printf("\nSelect which gate's information to display\n(Enter a number):     "); // The user is then asked which gate they want to see
+    int display_choice = get_user_input(GATE_OPTIONS); // Retreiving and validating the input using the get_usser_input function
 
     struct Gate *p = &NAND; // initialising a pointer for a gate, setting it to NAND by default
-    select_gate(p, display_choice); // calls a function which points the pointer towards the correct gate
+    select_gate(p, display_choice); // calls a function which points the pointer towards the chosen gate - which is determined using the user input
 
-    // Firstly, let's display the ASCII logic gate diagram for the chosen gate
+    // Firstly, the ASCII logic gate diagram is displayed for the chosen gate
     // But to do that we need to determine the input labels for the gate:
 
-    char inputs[p->n_inputs]; 
-    char outputs[p->n_outputs];
+    char inputs[p->n_inputs];   // The lengths of the arrays of inputs and outputs are determined by the struct the pointer is pointing to.
+    char outputs[p->n_outputs]; // This way, excess memory is not used up.
 
     for (int y = 0; y < p->n_inputs; y++){
-        inputs[y] = *p->input_names[y];
+        inputs[y] = *p->input_names[y]; // Rach label in the inputs array is assigned by using the dereferenced pointer to a struct with an array of input names.
     }
     for (int z = 0; z < p->n_inputs; z++){
-        outputs[z] = *p->output_names[z];
+        outputs[z] = *p->output_names[z]; // The same is done for the outputs array.
     }
     
-    display_gate(p, inputs, outputs,0);
+    display_gate(p, inputs, outputs,0); /* The gate is then displayed.
+                                           The pointer to the gate, the inputs and outputs arrays are all passed to the function,
+                                           as well as a control value set to zero.
+                                           This value means the gate is not written to the text file of the circuit. */
 
-    // Now to display the rest of the gate information
+    // Now to display the rest of the gate information using pointers to the selected struct
     printf("\nName of Gate: %s",p->name);
     printf("\nNumber of NANDs used to make the gate: %d",p->n_nands);
     printf("\nNumber of inputs: %d",p->n_inputs);
@@ -50,18 +54,20 @@ void menu_item_1(void) {
     printf("\nOutputs: %s",p->output_names);
     printf("\nBoolean_representation: %s\n",p->Boolean_representation);
    
+
+    // Finally, the user is asked if they'd like to see informstion for another gate.
     printf("Would you like to display information for another gate?\n(Enter 1 for yes, 0 for no):    ");
     important_constants two_options = BINARY_CHOICE;
     int yes_no = get_user_input(two_options);
-    if (yes_no == 1){
-        menu_item_1();
-    } else {
-        printf("\nReturning to Main Menu\n");
-        main_menu();
+    if (yes_no == 1){ 
+        menu_item_1(); // If they say yes, then the function is repeated and the user can pick another gate to display infor for.
+    } else {          
+        printf("\nReturning to Main Menu\n"); // Otherwise, return to the main menu.
+        main_menu(); 
     }
 }
 
-void print_gate_options(void){
+void print_gate_options(void){  // Self- explanatory
     printf("\n"
            "\t\t\t\t\t\t\n"
            "\t1. NAND\t\t\n"
@@ -76,7 +82,11 @@ void print_gate_options(void){
 }
 
 void display_gate(struct Gate *p, char* input_labels, char* output_labels, int create_file){
-//void display_gate(struct Gate *p){
+
+    /* This function does:
+    
+    
+    */
 
     char a; // initialising some arrays to store the lines of the logic gate diagrams in
     char b;
@@ -84,10 +94,8 @@ void display_gate(struct Gate *p, char* input_labels, char* output_labels, int c
     char d;
     char e;
 
-    /*
-    The logic gates have different diagrams and thus need to be displayed differently
-    (for the purposes of handling/displaying the input and output pins.)
-    */
+    /* The logic gates have different diagrams and thus need to be displayed differently
+    (for the purposes of handling/displaying the input and output pins.) */  
 
     // Creating the first line of diagram
     if (p->name == "Mux"){
@@ -141,19 +149,25 @@ void display_gate(struct Gate *p, char* input_labels, char* output_labels, int c
     }
     printf("%s",e);
 
-    /*
-    Now, if the gate is the once customized by the user (rather than a reference image)
-    then the gate's image should be saved to a text file as a record of the circuit.
-    */
+    
+    //Now, if the gate is the once customized by the user (rather than a reference image)
+    //then the gate's image should be saved to a text file as a record of the circuit.
+    
     if (create_file){
         char gate_data[7] = {"\n\n\n",a,b,c,d,e,"\n\n\n"}; // collate all the lines of the diagram together
         write_to_circuit_file(gate_data); // write the diagram to the text file
     }
-
 }
 
-void select_gate(struct Gate *p, int display_choice) // // A function which points the pointer towards the correct gate - depending on the entered number, enabling gate selection
-{
+void select_gate(struct Gate *p, int display_choice){
+
+    /* This function does:
+   
+    Using a switch, it points the struct pointer towards the chosen gate
+    (which is determined on the number entered by the user).
+    Thus, gate selection is enabled.
+    */
+
     switch (display_choice) {
         case 1:
             p = &NAND;
@@ -186,7 +200,11 @@ void select_gate(struct Gate *p, int display_choice) // // A function which poin
 }
 
 void menu_item_2(void) {
-    printf("\n>> Menu 2: Make Logic Circuit\n");
+    
+    /* This function does:
+    
+    
+    */
 
     /*
     Ideas:
@@ -273,7 +291,9 @@ void menu_item_2(void) {
     -----------------
 
     */
+    printf("\n>> Menu 2: Make Logic Circuit\n");
 
+    does_circuit_exist = 0;
     create_circuit_file(); // creating the text file for the gate
 
     printf("Select a logic gate to add to the circuit.");
@@ -297,7 +317,6 @@ void menu_item_2(void) {
 
         char names_of_inputs[p->n_inputs]; // creating 2 empty arrays for storing the input and output labels for this specific gate,
         char names_of_outputs[p->n_outputs]; // The size of the array has been set to the number of inputs and outputs for the selected gate.
-        //printf("");
 
         // 1st, priming the new output pins and finding an available slot for their index in the label list (so that we can store the labels for them)
 
@@ -429,6 +448,11 @@ void menu_item_2(void) {
 void menu_item_3(void) {
     printf("\n>> Menu 3: Circuit Testing\n");
 
+    /* This function does:
+    
+    
+    */
+
     // Before running this menu's functionality, we need to check if there's actually a circuit for this test script
     if (does_circuit_exist = 0){
         printf("\nThere is no circuit detected. Please make a circuit before making and running a test script.\nReturning to Main Menu.\n");
@@ -436,21 +460,8 @@ void menu_item_3(void) {
     }
 
     /*
-    // Now, ask the user if they'd like to make or run the test script or generate a truth table for the circuit
-    printf("\nPlease select a function:\n\n");
-    print_circuit_testing_menu();
-    printf("\nEnter a number:   ");
-    int option = get_user_input(CIRCUIT_TESTING_MENU_ITEMS);
-    */
-
-
-
-
-
-
-
-    /*
-    Allows user to enter to decide how many variables, variable names, outputs, then the variables will increment as normal, but the user will enter the output value for each output on a row
+    Allows user to enter to decide how many variables, variable names, outputs, then the variables will increment as normal,
+    but the user will enter the output value for each output on a row.
     */
 
     // First, create an array of input labels based on user input
@@ -623,7 +634,7 @@ void menu_item_3(void) {
     }
 }
 
-static void print_circuit_testing_menu(void)
+static void print_circuit_testing_menu(void) // Implement once menu 3 is fully functional without functions - then split it up
 {
     printf("\n---------- Circuit Testing Menu ----------\n");
     printf("\n"
@@ -637,6 +648,12 @@ static void print_circuit_testing_menu(void)
 }
 
 void run_circuit(void){
+
+    /* This function does:
+    
+    
+    */
+
     /*
     Loop through the pin_label array until hit unassigned for the value.
     For each pin label, use its corresponding index in the value array and set it equal to the operation
@@ -765,20 +782,13 @@ void run_circuit(void){
     }
 }
 
-void Generate_Truth_Table(void) {
-    printf("\n>> Circuit Testing Menu 3: Generate Truth Table\n");
-
-    /*
-    First, check if a circuit exists, if not - return to menu.
-    Will run 
-    Basically, just need to run the circuit for each possible input and record output in a table., (Print an array). Use iterative for loop from i of msb, j of less msb, ... z of lowest msb
-    e.g. for i(...){ for j(...){ for z(... )}}
-
-    */
-}
-
 void menu_item_4(void) {
     printf("\n>> Menu 4: Clearing previous circuit...\n");
+
+    /* This function does:
+    
+    
+    */
 
     /*
     This function clears the array of labels and the array of values by setting all the values in the labels to "unassigned" and all the values in the values array to 0
@@ -818,7 +828,7 @@ void menu_item_4(void) {
 
     }
 
-int create_circuit_file() {
+int create_circuit_file() { // Self-explanatory
    
     // File pointer
     FILE* fptr;
@@ -835,7 +845,7 @@ int create_circuit_file() {
     return 0;
 }
 
-int write_to_circuit_file(char custom_gate) {
+int write_to_circuit_file(char custom_gate) { // Self-explanatory
    
     // File pointer
     FILE* fptr;
@@ -860,7 +870,7 @@ int write_to_circuit_file(char custom_gate) {
     return 0;
 }
 
-int create_test_script_file() {
+int create_test_script_file() { // Self-explanatory
    
     // File pointer
     FILE* fptr;
@@ -877,7 +887,7 @@ int create_test_script_file() {
     return 0;
 }
 
-int write_to_test_script_file(char text) {
+int write_to_test_script_file(char text) { // Self-explanatory
    
     // File pointer
     FILE* fptr;

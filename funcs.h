@@ -26,7 +26,7 @@ Maybe attach a metadata for each value in THIS ARRAY which increments every time
 Then when the output variable(s) will have been used zero times.
 */
 
-int does_circuit_exist = 0; // defining this variable to be updated and used to check whether a circuit exists and thus whether some functions can run
+int does_circuit_exist; // defining this variable to be updated and used to check whether a circuit exists and thus whether some functions can run
 
 struct Gate{
     char name[10];

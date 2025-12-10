@@ -215,6 +215,10 @@ void menu_item_2(void) {
     printf("\n>> Menu 2: Make Logic Circuit\n");
 
     /* This function:
+
+
+    In short: it makes the circuit and saves it as a text file based on user inputs
+
     
     Asks the user which gate they'd like to add to the circuit, and to enter a nmber corresponding to this gate.
     The user input is recieved and validated, then used to point the pointer towards the correct struct for the gate.
@@ -430,9 +434,81 @@ void menu_item_2(void) {
 void menu_item_3(void) {
     printf("\n>> Menu 3: Circuit Testing\n");
 
-    /* This function does:
+    /* This function:
     
+
+    In short: it makes a test script, runs the circuit and compares it to the output the user expected.
+
+
+    First of all, the function checks if a circuit exists. If not, return to main menu.
+
+    Then, the user is asked how many inputs there are to the circuit.
+    Following this, an array of input labels is created with the length equal to the number of inputs
+    - to conserve memory usage - and a limit of 15 characters per label.
+    The user is then asked to enter as many label names for inputs as they specified earlier.
+    These names are stored in the aray.
+
+    The same is done for the outputs: number of outputs --> output label array of said size --> enter output label names --> store in array 
     
+    In order to make a test script the function needs to have all possible outputs:
+
+    The number of input combinations = 2^(number of inputs)
+    Some arrays are initialised to store the all the input combinations and the expected & actual outputs.
+
+    Then all the input combinations are calculated:
+
+    Each combination has a binary value. The combinations begin at zero and increment
+    until they reach a value equal to the number of input combinations. 
+
+    So, the decimal value of a given bit, for a given input combination, is equal to 2^(Number of inputs - 1 - the position of the bit in the array).
+    Whether a bit is one or zero is determined by whether the input combination value (k) minus the bit_value, minus values of preceding positive bits is either
+    a) greater than/equal to or b) less than zero. (See the code annotation of that stage for more clarity). 
+
+    This is easily done with a for loop and some if statements.
+    So, iterating through the input combinations, all the combinations are represented in binary
+    and are all stored in the array_of_input_combos array.
+
+    Next, the input and output labels are printed in a row on the same line - to form the top of the test script.
+    Then the binary representation of each input combination is printed from the array one by one.
+    After every combination, the user is asked to enter the output values for each output, for that input combination.
+    These outputs are stored in the array_of_expected_outputs because these are the outputs the USER expects.
+
+    To obtain the actual output values, the circuit has to be run...
+
+    The array of input combinations is iterated through, and for each input combination,
+    the labels in the array of input labels are compared to the labels of the pin names in the array of io labels.
+    If an input label matches the label of a pin name in the array of io labels, then the value relating to that input label
+    (stored in the array of input combos) is copied to a place in the array_of_io_values that corresponds to the matching label in
+    the array of io labels.
+    
+    This effectively just puts the input values for a given combination into the array_of_io_values
+    using the labels to get the values in the right places:
+
+                       array of input names == array of io labels
+    input combo array ---------------------------------------------> array of io values 
+
+    With the inputs inputted, the circuit is run (using the run circuit function). 
+    This will have generated the output values in the array_of_io_values.
+
+    So, now the reverse process is applied to extract the output values from the array of io values, and pass the value of the outputs
+    to the array of actual outputs.
+
+    When an output name label is equal to a pin label name in the array of io labels, the value in the array of io values (with the same position (index)
+    as the matching label in the array of io labels) is copied to the value in the array of actual outputs which has same index/position as
+    the matching output names label.
+
+                              array of output names == array of io labels
+    array of actual outputs <--------------------------------------------- array of io values 
+
+    Again, it's probably made eaiser to understand by looking at the code.
+
+    After ALL THAT, it's a simple matter of printing and storing each line of the test script into a final array called "results"
+    (where each row of the array is an input combination, expected outputs and actual outputs), with the input and output labels at the top 
+    of the test script, then comparing each value of the expected output array to the actual output array
+    - which is easily done because they have the same dimensions.
+
+    Finally the results array is written to a text file called "Test Script.txt".
+
     */
 
     // Before running this menu's functionality, we need to check if there's actually a circuit for this test script
@@ -441,16 +517,11 @@ void menu_item_3(void) {
         main_menu();
     }
 
-    /*
-    Allows user to enter to decide how many variables, variable names, outputs, then the variables will increment as normal,
-    but the user will enter the output value for each output on a row.
-    */
-
     // First, create an array of input labels based on user input
 
     printf("\nFirstly, how many INPUTS are there to the circuit (not including internal pins between logic gates)?\nEnter a single number:    ");
-    int Ninput;
-    scanf("%d",&Ninput); // Scanf should suffice, because we just want a single integer
+    int Ninput = get_user_input(MAX_NUMBER_OF_IO_PINS-1); /* The maximum number of inputs is 99
+    (because, theoretically, the circuit could be comprised of many gates that all combine and end in a gate with a single output). */
 
     printf("\nPlease enter the label names for each INPUT one at a time when prompted.\nEach label is limited to %d characters.\nNOTE: Please make sure that the input pin labels entered here match the input pin labels of the circuit - or the program WILL BREAK\n.",MAX_LABEL_LENGTH);
     char array_of_input_labels[Ninput][MAX_LABEL_LENGTH]; /* the size of the array is determined by how many inputs the user makes,
@@ -461,11 +532,10 @@ void menu_item_3(void) {
         fgets(array_of_input_labels, MAX_LABEL_LENGTH, stdin); // stores the input label name in the array of input labels
     }
 
-    // Second, create an array of outputs based on user input
+    // Secondly, create an array of outputs based on user input
 
-    printf("\nFirstly, how many OUTPUTS are there from the circuit (not including internal pins between logic gates)?\nEnter a single number:    ");
-    int Noutput;
-    scanf("%d",&Noutput); // Scanf should suffice, because we just want a single integer
+    printf("\nSecondly, how many OUTPUTS are there from the circuit (not including internal pins between logic gates)?\nEnter a single number:    ");
+    int Noutput = get_user_input(MAX_NUMBER_OF_IO_PINS/2); // The maximum number of output pins is half the number of pins because none of the gates has more outputs than inputs
 
     printf("\nPlease enter the label names for each OUTPUT one at a time when prompted.\nEach label is limited to %d characters.\nNOTE: Please make sure that the input pin labels entered here match the input pin labels of the circuit - or the program WILL BREAK\n.",MAX_LABEL_LENGTH);
     char array_of_output_labels[Noutput][MAX_LABEL_LENGTH]; /* the size of the array is determined by how many inputs the user makes,
@@ -497,17 +567,13 @@ void menu_item_3(void) {
     the actual outputs are printed next to the other inputs like - but not actually - a test script.
     */
 
-    int array_of_input_combos[number_of_input_combinations][Ninput]; // This array will contain each combination of inputs as a row, and each inputs value as a column
+    // These arrays will contain all possible inputs and their corresponding expected & atual outputs
+
+    int array_of_input_combos[number_of_input_combinations][Ninput]; // This array will contain each combination of inputs as a row, and each input's value as a column
     int array_of_expected_outputs[number_of_input_combinations][Noutput]; // Also, the array of expected outputs has as many rows as there are input combinations
     int array_of_actual_outputs[number_of_input_combinations][Noutput]; // Additionally, the array of actual outputs will have the same dimensions as the array of expected outputs
 
-    /*
-    need to begin with row 1, everything is zero. Then increment the last value in the row.
-    Then, if that last value is one on prev row, increment the value before it and set it to 1
-    - continues till all values are 1.
-    */
-
-    // Now, incrementing the values of the inputs for each row.
+    // Now, determining the values of the inputs for each row.
     for (int k = 1; k < number_of_input_combinations; k++){ // For each row of inputs
 
         /*
@@ -517,15 +583,26 @@ void menu_item_3(void) {
         */
 
         int combo_value = k;
-        // need to relate each bit to a multiplier based on Ninput - the position ,then subtract from k
+        /*
+        The value of each bit based on its position, and is equal to 2^(Number of inputs - 1 - the position of the bit in the array),
+        whether a bit is one or zero is whether k - bit_value - the value of preceding positive bits is >= or < zero.
+        E.g. if k = combo_value = 11 (or 1011 in binary), determining the 3rd bit would go like this:
+
+        bit_value = 2^(4 input bits - 1 - position 2 (from the LEFT, index starts at 0)) = 2
+
+        Then: k - 2 - 8 (the value of bit 0, which is positive) = 1. 
+
+        1 > 0, so the 3rd bit (position 2) = 1.
+
+        */
         
         for (int l = 0; l < Ninput; l++){ // For each input in a row
 
-            int value_of_bit = pow(2, Ninput - l); // e.g. for 4 bits, the 0th bit (the HSB) has value 8. Which is 2^(4-1).
+            int value_of_bit = pow(2, Ninput -1 - l); // e.g. for 4 bits, the 0th bit (the HSB) has value 8. Which is 2^(4-1-0).
 
             if (combo_value - value_of_bit >= 0 ){  // In this case, the bit is less than or equal to the combination value (e.g. combination 7, or 00000111)
                 array_of_input_combos[k][l] = 1;    // So, the bit can be used to represent part of this value.
-                combo_value = k - value_of_bit;     // The remaining value of the combination is then compared to the other bit values until it's been represented
+                combo_value = k - value_of_bit;     // The remaining value of the combination is then compared to the other bit values until it's been represented.
             }
             else if (combo_value - value_of_bit < 0 ){ // Eventually, once the combination value will have been represented by bits. Any following bits are 0.
                 array_of_input_combos[k][l] = 0;
@@ -543,16 +620,10 @@ void menu_item_3(void) {
             array_of_expected_outputs[k][m] = get_user_input(BINARY_CHOICE);
         }
     }   
-    printf("\n\nFinal Test Script:\n%s %s\n",array_of_input_labels,array_of_output_labels);
-    for (int n = 0; n < number_of_input_combinations; n++){
-        printf("\n%s %s\n\n",array_of_input_combos[n], array_of_expected_outputs[n]);
-    }
-    
-    // NEED TO SEND THESE SOMEWHERE: return array_of_input_labels, array_of_output_labels, array_of_input_combos, array_of_expected_outputs;
 
     // Now, we'll use the test script to evaluate the circuit
 
-    // For each set of inputs, need to run the circuit, find the output values and store in new array
+    // For each set of inputs, run the circuit, find the output values and store them in the array of actual outputs
     for (int o = 0; o < number_of_input_combinations; o++){
 
         /*
@@ -606,6 +677,7 @@ void menu_item_3(void) {
             }
         }
     }
+    printf("\n%s\n",number_of_discrepancies); // display number of discrepancies
     
     // Now to ask the user if they'd like to save these results to a text file
     printf("\nWould you like to save the test results?\nEnter 1 for yes, 0 for no:  ");
